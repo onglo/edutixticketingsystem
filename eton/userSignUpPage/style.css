@@ -1,0 +1,50 @@
+/* styling for the container div*/
+#container {
+  width: 35%;
+  /* center the div */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* put a nice boarder around the div */
+  border: 10px grey solid;
+  padding-bottom: 10px;
+}
+
+/* sytling for the login box */
+#signUpContainer {
+  background-color: #23F50C;
+  height: 50px;
+  line-height: 50px;
+}
+
+
+.form-group {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top:-15px;
+}
+
+label {
+  padding-top: 10px;
+}
+
+/* styling for the button */
+#submitButton {
+  width: 100%;
+  border-radius: 0px;
+  background-color: #0CD6F5;
+  border: none;
+  height: 50px;
+}
+
+/* styling when the button is hovered on */
+#submitButton:hover {
+  background-color: #FFD900;
+}
+
+/* styling for the sign up link */
+#signUpLink {
+  padding-left: 10px;
+  color: #9C9C9C;
+}

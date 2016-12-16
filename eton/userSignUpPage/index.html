@@ -1,0 +1,104 @@
+<html>
+
+  <head>
+
+      <!-- a title for the webpage -->
+      <title>Sign up</title>
+
+      <!-- bootstrap css-->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+
+      <!-- link to the page's stylesheet -->
+      <link rel="stylesheet" href="style.css" />
+
+  </head>
+
+  <body>
+
+    <!-- a container div -->
+    <div id="container">
+
+      <!-- a container for the sign up box -->
+      <div id="signUpContainer">
+
+        <!-- a label telling the user to sign up-->
+        <p style="color:white;text-align:center">Sign Up</p>
+
+      </div>
+
+      <!-- a form where they can sign up -->
+      <form>
+
+        <!-- a form group for the user info -->
+        <div class="form-group">
+
+            <!-- a label telling the user to input their first name -->
+            <label for="firstNameInput">First Name:</label>
+
+            <!--an input to input the users's first name -->
+            <input class="form-control" name="firstName" id="firstNameInput" placeholder="Enter First Name" />
+
+            <!-- a label telling the user to input their last name -->
+            <label for="lastNameInput">Last Name:</label>
+
+            <!--an input to input the users's second name -->
+            <input class="form-control "name="lastName" id="lastNameInput" placeholder="Enter Last Name" />
+
+        </div>
+
+        <!-- a form group for the email input -->
+        <div class="form-group">
+
+          <!-- a label telling them to input their email -->
+          <label for="usernameInput">Your Institution Email:</label>
+
+          <!-- username input -->
+          <input name="emailInput" id="emailInput" class="form-control" type="text" placeholder="Enter Email" />
+
+        </div>
+
+        <!-- a form group for the institution ID input -->
+        <div class="form-group">
+
+          <!-- a label telling them to input their instituditon ID -->
+          <label for="institutionIDInput">Your Institution ID:</label>
+
+          <!-- instition id input -->
+          <input name="institutionIDInput" id="institutionIDInput" class="form-control" type="text" placeholder="Enter Institution ID" />
+
+        </div>
+
+        <!-- a form group for the password input -->
+        <div class="form-group">
+
+          <!-- a label telling them to input their password -->
+          <label for="passwordInput">Password:</label>
+
+          <!-- password Input-->
+          <input name="passwordInput" id="passwordInput" class="form-control" type="password" placeholder="Enter Password" />
+
+          <!-- a label telling them to confirm their password -->
+          <label for="passwordInput">Confirm Password:</label>
+
+          <!-- confirm password Input Input-->
+          <input name="confirmPasswordInput" id="passwordInput" class="form-control" type="password" placeholder="Enter Password" />
+
+        </div>
+
+        <!-- a login button -->
+        <button id="submitButton" method="get" class="btn btn-primary">Submit</button>
+      </form>
+
+      <!-- a link where the user can sign up if they don't have an account-->
+      <a href="www.google.co.uk" id="signUpLink">Already have an account?</a>
+
+    </div>
+
+    <!-- link to jquery, tether and bootstrap-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+
+  </body>
+
+</html>
