@@ -8,8 +8,8 @@
       <!-- bootstrap css-->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
 
-      <!-- link to the page's stylesheet -->
-      <link rel="stylesheet" href="style.css" />
+      <!-- link to the page's stylesheet (DISABLED FOR DEVELOPMENT)
+      <link rel="stylesheet" href="style.css" />-->
 
   </head>
 
@@ -24,6 +24,10 @@
         <!-- a label telling the user to sign up-->
         <p style="color:white;text-align:center">Sign Up</p>
 
+      </div>
+
+      <!-- a banner that will be populated if there are any errors in signing up the user -->
+      <div class="alert alert-danger" style="display:none;" role="alert" id="alert">
       </div>
 
       <!-- a form where they can sign up -->
@@ -66,6 +70,9 @@
           <!-- password Input-->
           <input name="passwordInput" id="passwordInput" class="form-control" type="password" placeholder="Enter Password" />
 
+          <!-- tell the user their password has to be atleast 6 characters -->
+          <small id="passwordInfo" class="form-text text-muted">Your password must be at least 6 characters long</small>
+
           <!-- a label telling them to confirm their password -->
           <label for="passwordInput">Confirm Password:</label>
 
@@ -97,7 +104,7 @@
     if (!empty($_POST)) {
 
       // an array that will hold any errors
-      $errors = array();
+      $errors = "";
 
       // a list of the name of all of the forms
       $forms = array("firstName", "lastName", "emailInput", "passwordInput", "confirmPasswordInput");
@@ -109,8 +116,7 @@
         if (empty($_POST[$value])) {
 
           // add this as an error
-          array_push($errors, "One or more of the fields are empty.");
-
+          $errors .= ".One or more of the fields are empty";
           // break out of the loop
           break;
         }
@@ -118,7 +124,7 @@
 
       // check if passwords match
       if ($_POST["passwordInput"] != $_POST["confirmPasswordInput"]) {
-        array_push($errors, "The passwords don't match.");
+        $errors .= ".The passwords don't match";
       }
 
       // check if an eton email was not used
@@ -126,9 +132,16 @@
       if (empty($out) && !empty($_POST['emailInput'])) {
 
         // add this as an error
-        array_push($errors, 'This is not an Eton email address.');
+        $errors .= '.This is not an Eton email address';
       }
 
+      // check if the password is atleast 6 characters
+      if (strlen($_POST['passwordInput']) < 6 && !empty($_POST['passwordInput'])) {
+
+        // add this as an error
+        $errors .= '.Your password is not long enough';
+
+      }
       // connect to the db if there are no errors
       if (empty($errors)) {
         // connect to our database (host, database username, database password, database name)
@@ -151,7 +164,7 @@
 
           // check if the email is already taken
           if (!empty($data)) {
-            array_push($errors, "Email already registered.");
+            $errors .= ".Email already registered";
           }
 
         }
@@ -162,14 +175,49 @@
         // if there are still no errors sign up the user
         if (empty($errors)) {
 
+          // generate a public and private key
+          $keyPair = openssl_pkey_new();
+
+          // get the private key
+          openssl_pkey_export($keyPair, $privateKey);
+
+          // get the public key
+          $publicKey = openssl_pkey_get_details($keyPair);
+          $publicKey = $publicKey["key"];
+
+          // hash the private key
+          $privateKey = md5($privateKey.mysqli_real_escape_string($_POST["passwordInput"]));
+
+          echo $privateKey;
+
+
+
         }
-
-
       }
-      print_r($errors);
     }
 
     ?>
+
+    <!-- javascript -->
+    <script type="text/javascript">
+
+    // check if there are any errors
+    var errors = "<?php echo $errors ?>";
+    if(errors) {
+      // SPLIT THE ERRORS AND ADD LINE BREAKS
+      errors = errors.replace(".", "<br />&#8226 ")
+      errors = errors.replace(".", "<br />&#8226 ")
+      errors = errors.replace(".", "<br />&#8226 ")
+      errors = errors.replace(".", "<br />&#8226 ")
+      errors = errors.replace(".", "<br />&#8226 ")
+
+      // if there are add them to the div
+      $('#alert').html("<strong>Your account could not be created for the following reasons: </strong>" + errors);
+
+      // make the error visible
+      $('#alert').css("display", "inherit")
+    }
+    </script>
 
   </body>
 

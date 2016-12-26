@@ -4,9 +4,9 @@
   /* center the div */
   position: absolute;
   left: 50%;
-  transform: translate(-50%, 50%);
+  transform: translate(-50%, 0);
   /* put a nice boarder around the div */
-  border: 10px grey solid;
+  border: 10px blue solid;
   padding-bottom: 10px;
 }
 
