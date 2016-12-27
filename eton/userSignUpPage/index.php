@@ -185,13 +185,36 @@
           $publicKey = openssl_pkey_get_details($keyPair);
           $publicKey = $publicKey["key"];
 
-          // hash the private key
-          $privateKey = md5($privateKey.mysqli_real_escape_string($_POST["passwordInput"]));
+          // generate a unique salt for the user
+          $userSalt = mt_rand();
 
-          echo $privateKey;
+          // encrypt the private key
+          $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
 
+          // encrypt the password
+          $encryptedPassword = encryptPassword(mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
 
+          // encrypt their data
+          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["firstName"]), $firstNameEncrypted, $publicKey);
+          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["lastName"]), $lastNameEncrypted, $publicKey);
+          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["emailInput"]), $emailEncrypted, $publicKey);
 
+          // prepare a query to insert their database
+          $query = 'INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`) VALUES ($firstNameEncrypted, $lastNameEncrypted, $emailEncrypted, $encryptedPassword, $userSalt, $encryptedPrivateKey, $publicKey)';
+
+          // execute the query
+          if (mysqli_query($link, $query)) {
+
+            // redirect the user to a page telling them they were signed up but that they need to confirm their email
+            header("Location: http://www.edutix.com/eton/userSignUpPage/confirmationPage");
+
+            exit();
+
+          }
+          // if the query was not executed kill the script
+          else {
+            die("Error connecting to database".mysqli_connect_error());
+          }
         }
       }
     }
