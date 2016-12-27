@@ -11,6 +11,9 @@
       <!-- link to the page's stylesheet (DISABLED FOR DEVELOPMENT)
       <link rel="stylesheet" href="style.css" />-->
 
+      <!-- link to reCaptcha -->
+      <script src='https://www.google.com/recaptcha/api.js'></script>
+
   </head>
 
   <body>
@@ -81,8 +84,12 @@
 
         </div>
 
+        <!-- recaptcha -->
+        <div class="g-recaptcha" data-sitekey="6Lc38A8UAAAAAI31hcp9EcihJOx-woqf_WFAOhiT"></div>
+
         <!-- a login button -->
         <button id="submitButton" method="post" class="btn btn-primary">Submit</button>
+
       </form>
 
       <!-- a link where the user can sign up if they don't have an account-->
@@ -120,6 +127,12 @@
           // break out of the loop
           break;
         }
+      }
+
+      // check if recaptcha was submitted
+      if (empty($_POST["g-recaptcha-response"])) {
+          // add this as an error
+          $errors .= ".You need to verify that you are a human!";
       }
 
       // check if passwords match
@@ -173,6 +186,16 @@
         }
         else {
           die("Error connecting to database");
+        }
+
+        // check if the recaptcha is safe
+        $captcha=$_POST['g-recaptcha-response'];
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $response=file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$reCAPTCHA."&response=".$captcha."&remoteip=".$ip);
+        $responseKeys = json_decode($response,true);
+        if(intval($responseKeys["success"]) !== 1) {
+            // add this as an error if recaptcha was failed
+            $errors .= ".reCAPTCHA failed";;
         }
 
         // if there are still no errors sign up the user
