@@ -153,8 +153,11 @@
           die("Error connecting to database");
         };
 
+        // format the email
+        $formatted = encryptEmail(mysqli_real_escape_string($link, $_POST['emailInput']));
+
         // check if the username is already taken
-        $usernameTakenQuery = "SELECT `email` FROM `etonUsers` WHERE `email` = '".mysqli_real_escape_string($link, $_POST['emailInput'])."'";
+        $usernameTakenQuery = "SELECT `email` FROM `etonUsers` WHERE `email` = '".$formatted."'";
 
         // execute the query
         if ($result = mysqli_query($link, $usernameTakenQuery)) {
@@ -197,16 +200,25 @@
           // encrypt their data
           openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["firstName"]), $firstNameEncrypted, $publicKey);
           openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["lastName"]), $lastNameEncrypted, $publicKey);
-          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["emailInput"]), $emailEncrypted, $publicKey);
+          $emailEncrypted = encryptEmail(mysqli_real_escape_string($link, $_POST["emailInput"]));
+
+          // escape all the data we will use
+          $firstNameEncrypted = mysqli_real_escape_string($link, $firstNameEncrypted);
+          $lastNameEncrypted = mysqli_real_escape_string($link, $lastNameEncrypted);
+          $emailEncrypted = mysqli_real_escape_string($link, $emailEncrypted);
+          $encryptedPassword = mysqli_real_escape_string($link, $encryptedPassword);
+          $userSalt = mysqli_real_escape_string($link, $userSalt);
+          $encryptedPrivateKey = mysqli_real_escape_string($link, $encryptedPrivateKey);
+          $publicKey = mysqli_real_escape_string($link, $publicKey);
 
           // prepare a query to insert their database
-          $query = 'INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`) VALUES ($firstNameEncrypted, $lastNameEncrypted, $emailEncrypted, $encryptedPassword, $userSalt, $encryptedPrivateKey, $publicKey)';
+          $query = "INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`) VALUES ('$firstNameEncrypted', '$lastNameEncrypted', '$emailEncrypted', '$encryptedPassword', '$userSalt', '$encryptedPrivateKey', '$publicKey')";
 
           // execute the query
           if (mysqli_query($link, $query)) {
 
             // redirect the user to a page telling them they were signed up but that they need to confirm their email
-            header("Location: http://www.edutix.com/eton/userSignUpPage/confirmationPage");
+            header("Location: confirmationPage");
 
             exit();
 
