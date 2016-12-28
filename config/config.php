@@ -30,7 +30,13 @@ function encryptPassword($passwordToEncrypt, $userSaltInput) {
 // a function to encrypt emails
 function encryptEmail($targetEmail) {
     // encrypt the email and return it
-    $targetEmail = md5($targetEmail."W6zl5BGXAylZpOCA25El");
+    $targetEmail = openssl_encrypt($targetEmail, "AES-128-ECB", "W6zl5BGXAylZpOCA25El");
+    return $targetEmail;
+}
+
+// a function to decrypt emails
+function decryptEmail($targetEmail) {
+    $targetEmail = openssl_decrypt($targetEmail, "AES-128-ECB", "W6zl5BGXAylZpOCA25El");
     return $targetEmail;
 }
 

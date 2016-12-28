@@ -3,7 +3,7 @@
   <head>
 
       <!-- a title for the webpage -->
-      <title>Sign up</title>
+      <title>Edutix - Sign up</title>
 
       <!-- bootstrap css-->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
@@ -175,7 +175,7 @@
         // execute the query
         if ($result = mysqli_query($link, $usernameTakenQuery)) {
 
-          // get the resourcebundle_count
+          // get the result
           $data = mysqli_fetch_array($result);
 
           // check if the email is already taken
@@ -249,7 +249,7 @@
             if (mysqli_query($link, $query)) {
 
                 // prepare a msg to send to the user
-                $message = "Dear ".$firstName.",\r\n\r\nThank you for signing up to Edutix!\r\n\r\nPlease confirm your email address by visiting the link below:\r\nhttp://79.170.40.38/edutix.com/eton/userSignUpPage/confirmEmail?id=".$emailConfirmationLink."\r\n\r\nMany Thanks,\r\nThe Edutix Team";
+                $message = "Dear ".$firstName.",\r\n\r\nThank you for signing up to Edutix!\r\n\r\nPlease confirm your email address by visiting the link below:\r\nhttp://79.170.40.38/edutix.com/eton/userSignUpPage/confirmEmail?id=".rawurlencode($emailConfirmationLink)."\r\n\r\nMany Thanks,\r\nThe Edutix Team";
 
                 // send the email
                 mail($_POST["emailInput"], 'Welcome to Edutix!', $message, "'From:hello@Edutix.com' . '\r\n'");
