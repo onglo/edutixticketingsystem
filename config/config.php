@@ -34,4 +34,16 @@ function encryptEmail($targetEmail) {
     return $targetEmail;
 }
 
+// a function to generate a random string for email confirmation
+function emailConfirmationURL() {
+    // generate a random value
+    $value = mt_rand();
+
+    // md5 it
+    $value = md5($value);
+
+    // return this
+    return $value;
+}
+
 ?>

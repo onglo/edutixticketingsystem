@@ -201,55 +201,69 @@
         // if there are still no errors sign up the user
         if (empty($errors)) {
 
-          // generate a public and private key
-          $keyPair = openssl_pkey_new();
+            // generate a public and private key
+            $keyPair = openssl_pkey_new();
 
-          // get the private key
-          openssl_pkey_export($keyPair, $privateKey);
+            // get the private key
+            openssl_pkey_export($keyPair, $privateKey);
 
-          // get the public key
-          $publicKey = openssl_pkey_get_details($keyPair);
-          $publicKey = $publicKey["key"];
+            // get the public key
+            $publicKey = openssl_pkey_get_details($keyPair);
+            $publicKey = $publicKey["key"];
 
-          // generate a unique salt for the user
-          $userSalt = mt_rand();
+            // generate a unique salt for the user
+            $userSalt = mt_rand();
 
-          // encrypt the private key
-          $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
+            // encrypt the private key
+            $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
 
-          // encrypt the password
-          $encryptedPassword = encryptPassword(mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
+            // encrypt the password
+            $encryptedPassword = encryptPassword(mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
 
-          // encrypt their data
-          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["firstName"]), $firstNameEncrypted, $publicKey);
-          openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["lastName"]), $lastNameEncrypted, $publicKey);
-          $emailEncrypted = encryptEmail(mysqli_real_escape_string($link, $_POST["emailInput"]));
+            // encrypt their data
+            openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["firstName"]), $firstNameEncrypted, $publicKey);
+            openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["lastName"]), $lastNameEncrypted, $publicKey);
+            $emailEncrypted = encryptEmail(mysqli_real_escape_string($link, $_POST["emailInput"]));
 
-          // escape all the data we will use
-          $firstNameEncrypted = mysqli_real_escape_string($link, $firstNameEncrypted);
-          $lastNameEncrypted = mysqli_real_escape_string($link, $lastNameEncrypted);
-          $emailEncrypted = mysqli_real_escape_string($link, $emailEncrypted);
-          $encryptedPassword = mysqli_real_escape_string($link, $encryptedPassword);
-          $userSalt = mysqli_real_escape_string($link, $userSalt);
-          $encryptedPrivateKey = mysqli_real_escape_string($link, $encryptedPrivateKey);
-          $publicKey = mysqli_real_escape_string($link, $publicKey);
+            // generate the email confirmation link for the user
+            $emailConfirmationLink = emailConfirmationURL();
 
-          // prepare a query to insert their database
-          $query = "INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`) VALUES ('$firstNameEncrypted', '$lastNameEncrypted', '$emailEncrypted', '$encryptedPassword', '$userSalt', '$encryptedPrivateKey', '$publicKey')";
+            // escape all the data we will use
+            $firstNameEncrypted = mysqli_real_escape_string($link, $firstNameEncrypted);
+            $lastNameEncrypted = mysqli_real_escape_string($link, $lastNameEncrypted);
+            $emailEncrypted = mysqli_real_escape_string($link, $emailEncrypted);
+            $encryptedPassword = mysqli_real_escape_string($link, $encryptedPassword);
+            $userSalt = mysqli_real_escape_string($link, $userSalt);
+            $encryptedPrivateKey = mysqli_real_escape_string($link, $encryptedPrivateKey);
+            $publicKey = mysqli_real_escape_string($link, $publicKey);
+            $emailConfirmationLink = mysqli_real_escape_string($link, $emailConfirmationLink);
 
-          // execute the query
-          if (mysqli_query($link, $query)) {
+            // store the first name for the email
+            $firstName = $_POST["firstName"];
 
-            // redirect the user to a page telling them they were signed up but that they need to confirm their email
-            header("Location: confirmationPage");
 
-            exit();
+            // prepare a query to insert their database
+            $query = "INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`, `emailConfirmation`) VALUES ('$firstNameEncrypted', '$lastNameEncrypted', '$emailEncrypted', '$encryptedPassword', '$userSalt', '$encryptedPrivateKey', '$publicKey', '$emailConfirmationLink')";
 
-          }
-          // if the query was not executed kill the script
-          else {
-            die("Error connecting to database".mysqli_connect_error());
-          }
+            // execute the query
+            if (mysqli_query($link, $query)) {
+
+                // prepare a msg to send to the user
+                $message = "Dear ".$firstName.",\r\n\r\nThank you for signing up to Edutix!\r\n\r\nPlease confirm your email address by visiting the link below:\r\nhttp://79.170.40.38/edutix.com/eton/userSignUpPage/confirmEmail?id=".$emailConfirmationLink."\r\n\r\nMany Thanks,\r\nThe Edutix Team";
+
+                // send the email
+                mail($_POST["emailInput"], 'Welcome to Edutix!', $message, "'From:hello@Edutix.com' . '\r\n'");
+
+                // redirect the user to a page telling them they were signed up but that they need to confirm their email
+                header("Location: confirmationPage");
+
+                exit();
+
+            }
+            // if the query was not executed kill the script
+            else {
+                die("Error connecting to database".mysqli_connect_error());
+            }
         }
       }
     }
