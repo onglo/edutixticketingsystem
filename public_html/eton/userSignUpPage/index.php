@@ -212,7 +212,9 @@
             $publicKey = $publicKey["key"];
 
             // generate a unique salt for the user
-            $userSalt = mt_rand() * mt_rand();
+            $length = 32;
+            $secure = true;
+            $userSalt = openssl_random_pseudo_bytes($length, $secure);
 
             // encrypt the private key
             $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]));

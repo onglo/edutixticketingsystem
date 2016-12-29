@@ -74,7 +74,6 @@
 
       <!-- php -->
       <?php
-
       include("/home/sites/edutix.com/config/config.php");
 
       // check if the user has submitted data
@@ -136,7 +135,7 @@
                   $errors .= ".This account doesn't exist";
                 }
 
-                // if the account exists check if email has been confirmed + pssword
+                // if the account exists check pssword
                 if (empty($errors)) {
 
                     // check if this account's email has been confirmed
@@ -146,15 +145,15 @@
 
                     // check if the pssword is correct
                     $userKey = encryptPassword($_POST["passwordInput"], $data["salt"]);
-                    echo $userKey;
-                    echo $data["password"];
-                    echo $data["salt"];
+
+                    // password is false
                     if ($userKey != $data["password"]) {
 
                         // throw this as an error
                         $errors .= ".Your password is incorrect";
 
                     }
+                    //password is good
                     else {
                         echo "all good";
                     }
