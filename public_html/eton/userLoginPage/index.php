@@ -123,7 +123,7 @@
             $formattedEmail = mysqli_real_escape_string($link, $formattedEmail);
 
             // check if this account exists
-            $query = "SELECT `salt`,`emailConfirmation` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
+            $query = "SELECT `salt`,`emailConfirmation`,`password` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
 
             // get the data
             if ($result = mysqli_query($link, $query)) {
@@ -136,14 +136,29 @@
                   $errors .= ".This account doesn't exist";
                 }
 
-                // check if this account's email has been confirmed
-                if ($data["emailConfirmation"] != "true") {
-                    $errors .= ".Your email needs to be confirmed before you can login";
+                // if the account exists check if email has been confirmed + pssword
+                if (empty($errors)) {
+
+                    // check if this account's email has been confirmed
+                    if ($data["emailConfirmation"] != "true") {
+                        $errors .= ".Your email needs to be confirmed before you can login";
+                    }
+
+                    // check if the pssword is correct
+                    $userKey = encryptPassword($_POST["passwordInput"], $data["salt"]);
+                    echo $userKey;
+                    echo $data["password"];
+                    echo $data["salt"];
+                    if ($userKey != $data["password"]) {
+
+                        // throw this as an error
+                        $errors .= ".Your password is incorrect";
+
+                    }
+                    else {
+                        echo "all good";
+                    }
                 }
-
-                // if there are no errors check pssword
-
-                print_r($data);
 
             }
             else {

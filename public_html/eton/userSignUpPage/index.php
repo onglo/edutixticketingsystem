@@ -212,13 +212,13 @@
             $publicKey = $publicKey["key"];
 
             // generate a unique salt for the user
-            $userSalt = mt_rand();
+            $userSalt = mt_rand() * mt_rand();
 
             // encrypt the private key
-            $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
+            $encryptedPrivateKey = encryptPrivate($privateKey, mysqli_real_escape_string($link, $_POST["passwordInput"]));
 
             // encrypt the password
-            $encryptedPassword = encryptPassword(mysqli_real_escape_string($link, $_POST["passwordInput"]), $userSalt);
+            $encryptedPassword = encryptPassword($_POST["passwordInput"], $userSalt);
 
             // encrypt their data
             openssl_public_encrypt(mysqli_real_escape_string($link, $_POST["firstName"]), $firstNameEncrypted, $publicKey);
@@ -240,7 +240,6 @@
 
             // store the first name for the email
             $firstName = $_POST["firstName"];
-
 
             // prepare a query to insert their database
             $query = "INSERT INTO `cl11-main-rh8`.`etonUsers` (`firstName`, `lastName`, `email`, `password`, `salt`, `privateKey`, `publicKey`, `emailConfirmation`) VALUES ('$firstNameEncrypted', '$lastNameEncrypted', '$emailEncrypted', '$encryptedPassword', '$userSalt', '$encryptedPrivateKey', '$publicKey', '$emailConfirmationLink')";

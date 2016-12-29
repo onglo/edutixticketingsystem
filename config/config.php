@@ -8,10 +8,10 @@ $dbServer = "localhost";
 $reCAPTCHA = "6Lc38A8UAAAAAGtxlsslgQ6suFCT-u0xZECx00LJ";
 
 // a function to encrypt a user's private key
-function encryptPrivate($privateKeyInput, $passwordInput, $userSaltInput) {
+function encryptPrivate($privateKeyInput, $passwordInput) {
 
   // hash the private key
-  $encryptedPrivate = md5($privateKeyInput.$passwordInput.$userSaltInput);
+  $encryptedPrivate = openssl_encrypt($privateKeyInput, "AES-128-ECB", $passwordInput);
 
   // return this value
   return $encryptedPrivate;
@@ -20,7 +20,7 @@ function encryptPrivate($privateKeyInput, $passwordInput, $userSaltInput) {
 // a function to encrypt passwords
 function encryptPassword($passwordToEncrypt, $userSaltInput) {
 
-  $encrypted = crypt($passwordToEncrypt.$userSaltInput);
+  $encrypted = crypt($passwordToEncrypt,$userSaltInput);
 
   // return this value
   return $encrypted;
