@@ -65,7 +65,7 @@
         </form>
 
         <!-- a link where the user can sign up if they don't have an account-->
-        <a href="www.google.co.uk" id="signUpLink">Don't have an account yet?</a>
+        <a href="http://79.170.40.38/edutix.com/eton/userSignUpPage/" id="signUpLink">Don't have an account yet?</a>
 
         <!-- a link where the user can reset their password -->
         <a href="#" id="resetPassword">Forgot your passsword?</a>
