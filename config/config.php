@@ -52,4 +52,37 @@ function emailConfirmationURL() {
     return $value;
 }
 
+// a function to generate a token to reset passwords
+function generateToken() {
+
+    // first get the current time
+    $time = time();
+
+    // next generate a random value
+    $length = 32;
+    $secure = true;
+    $random = openssl_random_pseudo_bytes($length, $secure);
+
+    // generate the str to encrypt
+    $strToEncrypt = $random.$time;
+
+    // generate the token that will be sent to the user
+    $token = openssl_encrypt($strToEncrypt, "AES-128-ECB", $random);
+
+    // return the values
+    return array($random, $token);
+
+}
+
+// a function to decrypt the token
+function deToken($link, $token) {
+
+    // decrypt the token
+    $tokenValue = openssl_decrypt($link , "AES-128-ECB", $token);
+
+    // get the time value
+    $timeValue = str_replace($token, "", $tokenValue);
+
+    return $timeValue;
+}
 ?>

@@ -3,7 +3,7 @@
     <head>
 
         <!-- a title for the webpage -->
-        <title>Edutix- Reset Your Password</title>
+        <title>Edutix - Reset Your Password</title>
 
         <!-- bootstrap css-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
@@ -80,7 +80,81 @@
                 }
             }
 
+            // if there are no errors proceed to link to the database
+            if (empty($errors)) {
 
+                $link = mysqli_connect($dbServer, $dbUsername, $dbPassword, $dbUsername);
+
+                // see if there was an error
+                if (mysqli_connect_error()) {
+                    // kill the script
+                    die("Error connecting to database");
+                }
+
+                // format the email so that we can search for it in the db
+                $formattedSearch = encryptEmail($_POST["emailInput"]);
+                $formattedSearch = mysqli_real_escape_string($link, $formattedSearch);
+
+                // prepare a query to search for it
+                $query = "SELECT `token`,`resetLink` FROM `etonUsers` WHERE `email` = '".$formattedSearch."'";
+
+                // get the data
+                if ($result = mysqli_query($link, $query)) {
+
+                    $data = mysqli_fetch_array($result);
+
+                    // check if this is empty
+                    if (empty($data)) {
+                        // add this as an error (email doesn't exist)
+                        $errors .= ".This email is not registered to an account";
+                    }
+                    // check if a token has already been generated
+                    elseif (!empty($data["token"])) {
+                        // check if this token is still valid
+                        $value = deToken($data["resetLink"],$data["token"]);
+
+                        // make this value an int
+                        $value = (int) $value;
+
+                        // get the current time
+                        $currentTime = time();
+
+                        // figure out if the token is still valid
+                        if (($currentTime - $value) < 86400) {
+                            // the token is still valid and so return this as an error
+                            $errors .= ".A password reset has already been requested for this account";
+                        }
+                    }
+                    // if there are no errors reset the user's pssword
+                    if (empty($errors)) {
+
+                        // get the token for the user
+                        $userToken = generateToken();
+                        $userToken[0] = mysqli_real_escape_string($link, $userToken[0]);
+                        $userToken[1] = mysqli_real_escape_string($link, $userToken[1]);
+
+                        // prepare a query that will store the token in the db
+                        $query = "UPDATE `etonUsers` SET `token` = '".$userToken[0]."',`resetLink` = '".$userToken[1]."' WHERE `email` = '".$formattedSearch."'";
+
+                        // execute the query
+                        if ($result = mysqli_query($link, $query)) {
+
+                        }
+                        else {
+                            die("Error connecting to database");
+                        }
+
+                        // next store the token in the db, send the email to the user,
+
+
+                    }
+
+                }
+                else {
+                    // kill the script (error)
+                    die("Error connecting to database");
+                }
+            }
         }
 
         ?>
