@@ -96,7 +96,7 @@
                 $formattedSearch = mysqli_real_escape_string($link, $formattedSearch);
 
                 // prepare a query to search for it
-                $query = "SELECT `token`,`resetLink` FROM `etonUsers` WHERE `email` = '".$formattedSearch."'";
+                $query = "SELECT `token`,`resetLink`,`email` FROM `etonUsers` WHERE `email` = '".$formattedSearch."'";
 
                 // get the data
                 if ($result = mysqli_query($link, $query)) {
@@ -139,12 +139,17 @@
                         // execute the query
                         if ($result = mysqli_query($link, $query)) {
 
+                            // a message that will be sent to the user
+                            $message = "Hello,\r\n\r\nA request has been made to reset the password to your account. To do so, please visit the link below:\r\nhttp://79.170.40.38/edutix.com/eton/resetPassword/reset?email=".rawurlencode($data["email"])."&token=".rawurlencode($userToken[1])."\r\n\r\nIf you didn't request a password change, please ignore this email.\r\n\r\nMany Thanks,\r\nThe Edutix Team";
+
+                            // send the email
+                            mail(decryptEmail($data["email"]), 'Reset Edutix Password', $message, "'From:hello@Edutix.com' . '\r\n'");
                         }
                         else {
                             die("Error connecting to database");
                         }
 
-                        // next store the token in the db, send the email to the user,
+
 
 
                     }

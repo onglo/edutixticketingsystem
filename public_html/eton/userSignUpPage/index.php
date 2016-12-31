@@ -157,7 +157,7 @@
       }
       // connect to the db if there are no errors
       if (empty($errors)) {
-        // connect to our database 
+        // connect to our database
         $link = mysqli_connect($dbServer, $dbUsername, $dbPassword, $dbUsername);
 
         // check if the connection was succesful
