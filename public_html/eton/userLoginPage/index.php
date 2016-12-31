@@ -122,7 +122,7 @@
             $formattedEmail = mysqli_real_escape_string($link, $formattedEmail);
 
             // check if this account exists
-            $query = "SELECT `salt`,`emailConfirmation`,`password` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
+            $query = "SELECT `salt`,`emailConfirmation`,`password`,`privateKey`,`publicKey` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
 
             // get the data
             if ($result = mysqli_query($link, $query)) {
@@ -155,7 +155,24 @@
                     }
                     //password is good
                     else {
-                        echo "all good";
+
+                        // start a session that will authenticate the user
+                        session_start();
+                        session_destroy();
+                        session_start();
+
+                        // first store the ip of the user
+                        $_SESSION["ip"] = $_SERVER["REMOTE_ADDR"];
+
+                        // next store the public key for identification
+                        $_SESSION["userID"] = $data["publicKey"];
+
+                        // store the private key for authentication
+                        $_SESSION["privateKey"] = decryptPrivate($data["privateKey"], $_POST["passwordInput"]);
+
+                        // redirect the user home
+                        header("Location: /edutix.com/eton/home");
+
                     }
                 }
 

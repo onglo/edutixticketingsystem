@@ -17,6 +17,14 @@ function encryptPrivate($privateKeyInput, $passwordInput) {
   return $encryptedPrivate;
 }
 
+// a function to decrypt the user's private key
+function decryptPrivate($encryptedPrivateInput, $saltInput) {
+
+    $privateKey = openssl_decrypt($encryptedPrivateInput, "AES-128-ECB", $saltInput);
+    return $privateKey;
+
+}
+
 // a function to encrypt passwords
 function encryptPassword($passwordToEncrypt, $userSaltInput) {
 
