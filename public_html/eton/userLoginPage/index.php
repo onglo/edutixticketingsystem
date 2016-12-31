@@ -79,7 +79,7 @@
       // check if the user has submitted data
       if (!empty($_POST["usernameInput"]) or !empty($_POST["passwordInput"])) {
 
-          // an array that will hold all of the error
+          // an array that will hold all of the errors
           $errors = array();
 
           // make sure that none of the fields are empty
@@ -172,6 +172,7 @@
 
                         // redirect the user home
                         header("Location: /edutix.com/eton/home");
+                        exit();
 
                     }
                 }
@@ -184,6 +185,7 @@
 
          }
       }
+
       ?>
 
       <!-- link to jquery, tether and bootstrap-->
