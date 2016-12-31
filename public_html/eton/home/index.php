@@ -57,7 +57,38 @@
 
         ?>
 
-        
+        <!-- a container for our page -->
+        <div class="container">
+
+            <!-- a row -->
+            <div class="row">
+
+                <!-- a column for the menubar on the left -->
+                <div class="col-sm-3" style="background-color:blue">
+
+                    <!-- a table that will hold all of the menu options -->
+                    <table>
+
+                        <!-- a table row that will hold all of the options -->
+                        <tr>
+
+                            <!-- an option to create an event -->
+                            <td>Hello</td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <!-- a column for the main content area -->
+                <div class="col-sm-9" style="background-color:red">
+
+
+                </div>
+            </div>
+
+        </div>
 
         <!-- link to jquery, tether and bootstrap-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
