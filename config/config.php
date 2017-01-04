@@ -93,4 +93,48 @@ function deToken($link, $token) {
 
     return $timeValue;
 }
+
+// a function to check if the user is authenticated
+function authenticateUser() {
+    // start a session
+    session_start();
+
+    // redirect function
+    function deniedRedirect() {
+        // unset the session
+        session_unset();
+
+        // redirect the user and kill the script
+        header("Location: /edutix.com/eton/acessDenied");
+        exit();
+    }
+
+    // first check if all of the user's info is present
+    if (empty($_SESSION["ip"]) or empty($_SESSION["userID"]) or empty($_SESSION["privateKey"]) ) {
+
+        // redirect the user
+        deniedRedirect();
+    }
+
+    // check if the user's ip is good
+    if ($_SERVER["REMOTE_ADDR"] != $_SESSION["ip"]) {
+        // redirect the user
+        deniedRedirect();
+    }
+
+    // check if the private key matches the public key
+    // generate some data
+    $data = mt_rand();
+
+    // encrypt it using the public key
+    openssl_public_encrypt($data, $encryptedData, $_SESSION["userID"]);
+
+    // decrypt
+    openssl_private_decrypt($encryptedData, $decryptedData, $_SESSION["privateKey"]);
+
+    // check if the values correspond
+    if ($data != $decryptedData) {
+        deniedRedirect();
+    }
+}
 ?>
