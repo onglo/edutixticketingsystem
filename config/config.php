@@ -94,19 +94,21 @@ function deToken($link, $token) {
     return $timeValue;
 }
 
+// redirect function
+function deniedRedirect() {
+    // unset the session
+    session_unset();
+
+    // redirect the user and kill the script
+    header("Location: /edutix.com/eton/acessDenied");
+    exit();
+}
+
 // a function to check if the user is authenticated
 function authenticateUser() {
     // start a session
-    session_start();
-
-    // redirect function
-    function deniedRedirect() {
-        // unset the session
-        session_unset();
-
-        // redirect the user and kill the script
-        header("Location: /edutix.com/eton/acessDenied");
-        exit();
+    if(session_id() == '') {
+        session_start();
     }
 
     // first check if all of the user's info is present
@@ -137,4 +139,24 @@ function authenticateUser() {
         deniedRedirect();
     }
 }
+
+// function to validate dates
+function validateDate($date)
+{
+    $d = DateTime::createFromFormat('Y-m-d', $date);
+    return $d && $d->format('Y-m-d') === $date;
+}
+
+// a function to encrypt event data
+function encryptEventData($uniqueSalt, $dataToEncrypt) {
+
+    // remove any html tags from the data
+    $dataToEncrypt = strip_tags($dataToEncrypt);
+
+    // enncrypt the data
+    $encrypted = openssl_encrypt($dataToEncrypt, "AES-128-ECB", $uniqueSalt."LqtWbd8RkO6pYxIpPLfZ");
+
+    return $encrypted;
+}
+
 ?>
