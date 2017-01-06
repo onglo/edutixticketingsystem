@@ -2,7 +2,9 @@
 
 // logout the user by destryoing their session
 session_unset();
-session_destroy();
+if (session_id() != ""){
+    session_destroy();
+}
 
 echo "success";
 

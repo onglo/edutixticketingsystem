@@ -5,7 +5,44 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
         <link rel="stylesheet" href="app.min.css">
         <style>
-            /* TODO */
+
+        /* styytling for the event block items */
+        .eventDate {
+
+            color: grey;
+
+        }
+        .eventTitle {
+
+        }
+        .eventDesc {
+
+        }
+        .eventLocation {
+
+        }
+        .eventHost {
+
+            color: grey;
+
+        }
+        .eventSegment {
+
+        }
+        #locationMarker {
+            width: 20px;
+            height: 20px;
+        }
+        .dateBanner {
+            text-align: center;
+            background-color: black;
+            color: white !important;
+        }
+        .refresh {
+            background-color: orange;
+            color: white;
+        }
+
         </style>
 
         <!-- recaptcha-->
@@ -14,23 +51,24 @@
     </head>
 
     <body>
-        <div class="app-page" data-page="home">
+        <div class="app-page" data-page="mainPage">
 
             <div class="app-topbar blue">
-                <div class="app-title blue">Events</div>
+                <div class="app-title">What's On?</div>
 
                 <!-- a button to logout -->
                 <div class="right app-button" id="logoutButton">Log Out</div>
 
             </div>
 
-            <div class="app-content">
+            <!-- the main page where the events will go -->
+            <div class="app-content" id="mainPageBody">
 
             </div>
         </div>
 
         <!-- a page where the user can login -->
-        <div class="app-page" data-page="loginPage">
+        <div class="app-page" data-page="home">
 
             <!-- the top bar of the app -->
             <div class="app-topbar blue">
@@ -65,8 +103,7 @@
     <script src="app.min.js"></script>
     <script>
 
-    App.controller('home', function (page) {
-
+    App.controller('mainPage', function (page) {
         // an ajax request to check if a user is currently logged in
         $.ajax({
 
@@ -79,7 +116,7 @@
                 if (html != "true") {
 
                     // redirect the user
-                    App.load("loginPage");
+                    App.load("home");
 
                 }
             }
@@ -88,7 +125,6 @@
 
         // function that is executed when the logout button is pressed
         $(page).find("#logoutButton").clickable().on('click', function() {
-
             // run an ajax script that will log the user out
             $.ajax({
 
@@ -101,7 +137,7 @@
                     if (html == "success") {
 
                         // redirect the user
-                        App.load("loginPage");
+                        App.load("home");
 
                     }
                 }
@@ -109,9 +145,67 @@
             })
 
         });
+
+        $(page).on("appShow", function () {
+
+            // an ajax call to load up all of the events
+            $.ajax({
+                type: "POST",
+                url: "scripts/fetchEvents.php",
+                data: "startOffset=0",
+                success: function(html) {
+
+                    // if there are no events to show display this to the user
+                    if (html == "none") {
+                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, there aren't any events to show</p>");
+                    }
+                    else if (html == "error" || html == "")  {
+                        // if there was an error tell the user this
+                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, were having some trouble fetching the events. Please try again later.</p>");
+                    }
+                    else {
+                        // turn the output into a javascript array
+                        var events = JSON.parse(html);
+
+                        // initialise the datebanner to be yesterday
+                        var oldDate = new Date();
+                         oldDate.setDate(oldDate.getDate()-1);
+
+                        // loop through each value in this array
+                        for (var event = 0; event < events.length; event++) {
+
+                            var date = new Date(events[event][3]);
+
+                            // check if this date is greater than the current day we are on
+                            if (date > oldDate) {
+                                // generate a new banner for this day
+                                var dateToUse = date.toDateString().slice(0,-5);
+                                $(page).find("#mainPageBody").append("<p class='app-section dateBanner'>"+dateToUse+"</p>");
+
+                                // set this as the old date
+                                oldDate = date;
+                            }
+
+                            date = date.toDateString().slice(0,-5);
+
+                            // prepare the div we will insert
+                            var divToInsert = $('<div class="app-section" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+date+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment">'+events[event][2]+'</h3><h3 class="location eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
+
+                            // insert a div into the page for this event
+                            $(page).find("#mainPageBody").append(divToInsert);
+
+                        }
+                    }
+
+                }
+
+            })
+
+        })
+
     });
 
-    App.controller("loginPage", function (page) {
+    App.controller("home", function (page) {
 
         // initially hide the errors box
         $(page).find("#errorField").hide();
@@ -160,7 +254,7 @@
                             if (html == "success") {
 
                                 // go to the homepage
-                                App.load('home');
+                                App.load('mainPage');
 
                             }
                             else {
@@ -188,7 +282,7 @@
     try {
         App.restore();
     } catch (err) {
-        App.load('home');
+        App.load('mainPage');
     }
     </script>
   </body>

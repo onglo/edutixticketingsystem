@@ -159,4 +159,13 @@ function encryptEventData($uniqueSalt, $dataToEncrypt) {
     return $encrypted;
 }
 
+// a function to decrypt event data
+function decryptEventData($uniqueSalt, $dataToDecrypt) {
+
+    // perform the decruption
+    $decrypted = openssl_decrypt($dataToDecrypt, "AES-128-ECB", $uniqueSalt."LqtWbd8RkO6pYxIpPLfZ");
+    return $decrypted;
+
+}
+
 ?>

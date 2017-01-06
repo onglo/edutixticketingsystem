@@ -162,9 +162,10 @@
                 $eventHost = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["hostName"]));
                 $isTicketed = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["isTicketed"]));
                 $createdBy = mysqli_real_escape_string($link, encryptEventData($salt, $_SESSION["userID"]));
+                $salt = mysqli_real_escape_string($link, $salt);
 
                 // prepare a query that will insert it into the database
-                $query = "INSERT INTO `etonEvents` (`eventName`,`eventDesc`,`eventDate`,`eventLocation`,`eventHost`,`isTicketed`,`createdBy`) VALUES ('$eventName', '$eventDescription', CAST('$eventDate' AS DATE), '$eventLocation', '$eventHost', '$isTicketed', '$createdBy')";
+                $query = "INSERT INTO `etonEvents` (`eventName`,`eventDesc`,`eventDate`,`eventLocation`,`eventHost`,`isTicketed`,`createdBy`,`salt`) VALUES ('$eventName', '$eventDescription', CAST('$eventDate' AS DATE), '$eventLocation', '$eventHost', '$isTicketed', '$createdBy', '$salt')";
                 echo $query;
 
                 // attempt to execute the query
