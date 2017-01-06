@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+        <link rel="stylesheet" href="app.min.css">
+        <style>
+            /* TODO */
+        </style>
+
+        <!-- recaptcha-->
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    </head>
+
+    <body>
+        <div class="app-page" data-page="home">
+            <div class="app-topbar">
+                <div class="app-title">Home page</div>
+            </div>
+            <div class="app-content">
+
+            </div>
+        </div>
+
+        <!-- a page where the user can login -->
+        <div class="app-page" data-page="loginPage">
+
+            <!-- the top bar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Login</div>
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorField"></p>
+
+                <!-- an app section for the login form -->
+                <div class="app-section">
+
+                    <!-- an input for the user's email -->
+                    <input id="emailInput" class="app-input" name="email" type="email" placeholder="Enter Email" />
+
+                    <!-- an input for the password -->
+                    <input id="passwordInput" class="app-input" name="password" type="password" placeholder="Enter Password" />
+
+                    <!-- a login button -->
+                    <div class="app-button green" id="submitButton">Access Edutix</div>
+
+                </div>
+
+            </div>
+        </div>
+
+    <!-- jquery script -->
+    <script src="zepto.js"></script>
+    <script src="app.min.js"></script>
+    <script>
+
+    App.controller('home', function (page) {
+
+        // an ajax request to check if a user is currently logged in
+        
+
+    });
+
+    App.controller("loginPage", function (page) {
+
+        // initially hide the errors box
+        $(page).find("#errorField").hide();
+
+        // make the login button clickable (function that executes when the button is pressed)
+        $(page).find("#submitButton").clickable().on('click', function() {
+
+            // check if any of the fields are empty
+            if ($(page).find("#passwordInput").val() == "" || $(page).find("#emailInput").val() == "") {
+
+                // if they are add this to the error div
+                $(page).find("#errorField").html("Error - One or more of the fields are empty");
+
+                // show the field
+                $(page).find("#errorField").show();
+
+            }
+            else {
+
+                // check if the email is valid
+                var pattern = new RegExp(/^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i);
+                if (!pattern.test($(page).find("#emailInput").val())) {
+
+                    // if they are add this to the error div
+                    $(page).find("#errorField").html("Error - Invalid Email");
+
+                    // show the field
+                    $(page).find("#errorField").show();
+
+                }
+                else {
+
+                    // try to login the user with via ajax request
+                    $.ajax({
+
+                        type: "POST",
+                        url: "scripts/login.php",
+                        data: "username="+$(page).find("#emailInput").val()+"&password="+$(page).find("#passwordInput").val(),
+                        // function that will execute before the data is sent
+                        beforeSend: function () {
+                            // change the button to loading
+                            $(page).find("#submitButton").html("Loading...");
+                        },
+                        success: function(html) {
+
+                            // check if the login was a success
+                            if (html == "success") {
+
+                                // go to the homepage
+                                App.load('home');
+
+                            }
+                            else {
+                                // else spit an error message
+                                $(page).find("#errorField").html(html);
+
+                                // show the field
+                                $(page).find("#errorField").show();
+
+                                // change the button again
+                                $(page).find("#submitButton").html("Access Edutix");
+
+                            }
+                        }
+
+                    })
+
+                }
+                return false;
+            }
+        });
+    });
+
+    try {
+        App.restore();
+    } catch (err) {
+        App.load('home');
+    }
+    </script>
+  </body>
+</html>
