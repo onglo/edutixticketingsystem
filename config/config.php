@@ -106,7 +106,7 @@ function deniedRedirect() {
 
 // a function to check if the user is authenticated
 function authenticateUser() {
-    // start a session
+    // start a session if one isn't already started
     if(session_id() == '') {
         session_start();
     }

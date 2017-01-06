@@ -51,17 +51,18 @@ if ($result = mysqli_query($link, $query)) {
         else {
 
             // start a session that will authenticate the user
-            session_start();
-            session_destroy();
-            session_start();
+            if (session_id() == "") {
+                session_start();
+            }
 
             // next store the public key for identification
             $_SESSION["userID"] = $data["publicKey"];
 
             // store the private key for authentication
-            $_SESSION["privateKey"] = decryptPrivate($data["privateKey"], $_POST["passwordInput"]);
+            $_SESSION["privateKey"] = decryptPrivate($data["privateKey"], $_POST["password"]);
 
-            echo("success");
+            echo "success";
+            exit();
 
         }
     }

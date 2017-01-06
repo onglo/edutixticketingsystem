@@ -15,9 +15,15 @@
 
     <body>
         <div class="app-page" data-page="home">
-            <div class="app-topbar">
-                <div class="app-title">Home page</div>
+
+            <div class="app-topbar blue">
+                <div class="app-title blue">Events</div>
+
+                <!-- a button to logout -->
+                <div class="right app-button" id="logoutButton">Log Out</div>
+
             </div>
+
             <div class="app-content">
 
             </div>
@@ -62,8 +68,47 @@
     App.controller('home', function (page) {
 
         // an ajax request to check if a user is currently logged in
-        
+        $.ajax({
 
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("loginPage");
+
+                }
+            }
+
+        })
+
+        // function that is executed when the logout button is pressed
+        $(page).find("#logoutButton").clickable().on('click', function() {
+
+            // run an ajax script that will log the user out
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/logout.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user was logged out
+                    if (html == "success") {
+
+                        // redirect the user
+                        App.load("loginPage");
+
+                    }
+                }
+
+            })
+
+        });
     });
 
     App.controller("loginPage", function (page) {
@@ -98,7 +143,6 @@
 
                 }
                 else {
-
                     // try to login the user with via ajax request
                     $.ajax({
 
@@ -120,6 +164,7 @@
 
                             }
                             else {
+
                                 // else spit an error message
                                 $(page).find("#errorField").html(html);
 
