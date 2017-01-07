@@ -42,8 +42,24 @@
             background-color: orange;
             color: white;
         }
-        #errorField {
+        #errorFieldCreateEvent {
             background-color: red;
+            color: white;
+        }
+        #errorFieldLogin {
+            background-color: red;
+            color: white;
+        }
+        #errorFieldCreateAccount {
+            background-color: red;
+            color: white;
+        }
+        #errorFieldResetPassword {
+            background-color: red;
+            color: white;
+        }
+        #successBanner {
+            background-color: green;
             color: white;
         }
         .orange {
@@ -54,6 +70,9 @@
         }
         #signUpLink {
             float: left;
+        }
+        #passwordPrompt {
+            font-size: 12px;
         }
         </style>
 
@@ -99,7 +118,7 @@
             <div class="app-content">
 
                 <!-- an app section that will be populated with text if there is an issue with the input -->
-                <p class="app-section" id="errorField"></p>
+                <p class="app-section" id="errorFieldLogin"></p>
 
                 <!-- an app section for the login form -->
                 <div class="app-section">
@@ -115,14 +134,11 @@
 
                 </div>
 
-                <!-- a paragraph that will have the two options -->
-                <div class="app-section" style="clear:both;">
+                <!-- a p that will act as a button to creat an account -->
+                <p class="app-section" id="createAccount">Don't have an account?</p>
 
-                    <p id="signUpLink">Don't have an account?</p>
-
-                    <p id="forgotPasswordLink">Forgot Password?</p>
-
-                </div>
+                <!-- a p that will act as a button to reset the user's password -->
+                <p class="app-section" id="resetPassword">Forgot Password?</p>
 
             </div>
         </div>
@@ -143,7 +159,7 @@
             <div class="app-content">
 
                 <!-- an app section that will be populated with text if there is an issue with the input -->
-                <p class="app-section" id="errorField"></p>
+                <p class="app-section" id="errorFieldCreateEvent"></p>
 
                 <!-- an app section for the inputs that we need -->
                 <div class="app-section">
@@ -213,6 +229,102 @@
 
                     <!-- a create event button -->
                     <div class="app-button green" id="createEventButton">Create Event!</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- a page to create an account -->
+        <div class="app-page" data-page="createAccount">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Create An Account</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back data-autotitle>Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldCreateAccount"></p>
+
+                <!-- an app section that will be populated with text if the user is signed up -->
+                <p class="app-section" id="successBanner"></p>
+
+                <!-- a container for first name and last name inputs-->
+                <div class="app-section">
+
+                    <!-- the input for the first name -->
+                    <input class="app-input" type="text" id="firstnameInput" placeholder="What is your first name?" />
+                    <!-- input for the last name -->
+                    <input class="app-input" type="text" id="surnameInput" placeholder="What is your surname?" />
+                </div>
+
+                <!-- an app section for the eton email -->
+                <div class="app-section">
+
+                    <!-- an input for this email -->
+                    <input class="app-input" type="email" id="emailInput" placeholder="What is your Eton email address?" />
+
+                </div>
+
+                <!-- an app section for the password input -->
+                <div class="app-section">
+
+                    <!-- an input for the password -->
+                    <input type="password" class="app-input" placeholder="Enter your desired password" id="password"/>
+
+                    <p class="app-input" id="passwordPrompt">(Your password needs to be at least 6 characters long)</p>
+
+                    <!-- an input for the confirm password -->
+                    <input type="password" class="app-input" id="confirmPassword" placeholder="Please confirm your password" />
+
+                    <!-- a sign up button -->
+                    <div class="app-button green" id="signUpButton">Sign Up!</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- a page to reset your password -->
+        <div class="app-page" data-page="resetPassword">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Reset Your Password</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back data-autotitle>Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldResetPassword"></p>
+
+                <!-- an app section that will be populated with text if the user is signed up -->
+                <p class="app-section" id="successBanner"></p>
+
+                <!-- a p telling the user what will happen -->
+                <p class="app-section">Enter your email below and we will send confirmation instructions to your email</p>
+
+                <!-- an app section for the email and submit button -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" id="resetEmailInput" type="email" placeholder="Enter email here" />
+
+                    <!-- a submit button -->
+                    <div class="app-button green" id="resetSubmit">Submit</div>
+
                 </div>
 
             </div>
@@ -330,7 +442,7 @@
     App.controller("home", function (page) {
 
         // initially hide the errors box
-        $(page).find("#errorField").hide();
+        $(page).find("#errorFieldLogin").hide();
 
         // make the login button clickable (function that executes when the button is pressed)
         $(page).find("#submitButton").clickable().on('click', function() {
@@ -339,10 +451,10 @@
             if ($(page).find("#passwordInput").val() == "" || $(page).find("#emailInput").val() == "") {
 
                 // if they are add this to the error div
-                $(page).find("#errorField").html("Oops! - One or more of the fields are empty");
+                $(page).find("#errorFieldLogin").html("Oops! - One or more of the fields are empty");
 
                 // show the field
-                $(page).find("#errorField").show();
+                $(page).find("#errorFieldLogin").show();
 
             }
             else {
@@ -352,10 +464,10 @@
                 if (!pattern.test($(page).find("#emailInput").val())) {
 
                     // if they are add this to the error div
-                    $(page).find("#errorField").html("Oops! - Invalid Email");
+                    $(page).find("#errorFieldLogin").html("Oops! - Invalid Email");
 
                     // show the field
-                    $(page).find("#errorField").show();
+                    $(page).find("#errorFieldLogin").show();
 
                 }
                 else {
@@ -382,10 +494,10 @@
                             else {
 
                                 // else spit an error message
-                                $(page).find("#errorField").html("Oops! - There was an error, please try again later!");
+                                $(page).find("#errorFieldLogin").html("Oops! - "+html);
 
                                 // show the field
-                                $(page).find("#errorField").show();
+                                $(page).find("#errorFieldLogin").show();
 
                                 // change the button again
                                 $(page).find("#submitButton").html("Access Edutix");
@@ -393,11 +505,27 @@
                             }
                         }
 
-                    })
+                    });
 
                 }
                 return false;
             }
+        });
+
+        // function that executes when don't have an account is pressed
+        $(page).find("#createAccount").clickable().on("click", function() {
+
+            // redirect to the create account page
+            App.load("createAccount");
+
+        });
+
+        // function that executes when forgot pssword is pressed
+        $(page).find("#resetPassword").clickable().on("click", function() {
+
+            // redirect to the create account page
+            App.load("resetPassword");
+
         });
     });
 
@@ -405,7 +533,7 @@
     App.controller("createEvent", function (page) {
 
         // initially hide the errors box
-        $(page).find("#errorField").hide();
+        $(page).find("#errorFieldCreateEvent").hide();
 
         // an ajax request to check if a user is currently logged in
         $.ajax({
@@ -434,10 +562,10 @@
                 alert($(page).find("#dateInput").val())
 
                 // if they are add this to the error div
-                $(page).find("#errorField").html("Oops! - One or more of the fields are empty");
+                $(page).find("#errorFieldCreateEvent").html("Oops! - One or more of the fields are empty");
 
                 // show the field
-                $(page).find("#errorField").show();
+                $(page).find("#errorFieldCreateEvent").show();
             }
             else {
 
@@ -464,10 +592,10 @@
                         else {
 
                             // add the error to the error field
-                            $(page).find("#errorField").html("Oops! - There was an error, please try again later!");
+                            $(page).find("#errorFieldCreateEvent").html("Oops! - There was an error, please try again later!");
 
                             // show the field
-                            $(page).find("#errorField").show();
+                            $(page).find("#errorFieldCreateEvent").show();
 
                             // change the text of the button
                             $(page).find("#createEventButton").html("Create Event!");
@@ -480,6 +608,228 @@
 
         });
 
+
+    });
+
+    // the app controller for the create account page
+    App.controller("createAccount", function (page) {
+
+        // initially hide the error field
+        $(page).find("#errorFieldCreateAccount").hide();
+
+        // hide the success banner
+        $(page).find("#successBanner").hide();
+
+        // function that executes when the sign up button is pressed
+        $(page).find("#signUpButton").clickable().on("click", function() {
+
+            // check if any of the fields are empty
+            if ($(page).find("#firstnameInput").val() == "" || $(page).find("#surnameInput").val() == "" || $(page).find("#emailInput").val() == "" || $(page).find("#password").val() == "" || $(page).find("#confirmPassword").val() == "") {
+
+                // write this to the error div
+                $(page).find("#errorFieldCreateAccount").html("Oops! - One or more of the fields are empty");
+
+                // make the div visible
+                $(page).find("#errorFieldCreateAccount").show();
+
+            }
+            else {
+
+                // check if the passwords match
+                if ($(page).find("#password").val() != $(page).find("#confirmPassword").val()) {
+
+                    // write this to the error div
+                    $(page).find("#errorFieldCreateAccount").html("Oops! - The passwords don't match");
+
+                    // make the div visible
+                    $(page).find("#errorFieldCreateAccount").show();
+                }
+                else {
+
+                    // initialise a regex that will text emails
+                    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+                    // check if the email is valid and if it is an etoncollege email
+                    if (!regex.test($(page).find("#emailInput").val()) || $(page).find("#emailInput").val().toLowerCase().indexOf("@etoncollege.org.uk") < 0) {
+
+                        // write this to the error div
+                        $(page).find("#errorFieldCreateAccount").html("Oops! - The email is invalid (make sure it's an Eton email address)");
+
+                        // make the div visible
+                        $(page).find("#errorFieldCreateAccount").show();
+                    }
+                    else {
+
+                        // check if the password is long enough
+                        if ($(page).find("#password").val().length < 6) {
+
+                            // write this to the error div
+                            $(page).find("#errorFieldCreateAccount").html("Oops! - Your password isn't long enough");
+
+                            // make the div visible
+                            $(page).find("#errorFieldCreateAccount").show();
+                        }
+                        else {
+
+                            // attempt to sign up the user with an AJAX call
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/signUpUser.php",
+                                data: "emailInput="+$(page).find("#emailInput").val()+"&firstName="+$(page).find("#firstnameInput").val()+"&lastName="+$(page).find("#surnameInput").val()+"&passwordInput="+$(page).find("#password").val(),
+                                // function that will execute before the data is sent
+                                beforeSend: function () {
+
+                                    // change the button to loading
+                                    $(page).find("#signUpButton").html("Loading...");
+
+                                    // hide the error div if it is still there
+                                    $(page).find("#errorFieldCreateAccount").hide();
+                                },
+                                success: function(html) {
+
+                                    // sign up was a sucess
+                                    if (html == "success") {
+
+                                        // tell the user they have been signed up and that an email was sent to their email
+                                        $(page).find("#successBanner").html("Success! - You're all signed up. Please check your emails to confirm ownership of your account");
+
+                                        $(page).find("#successBanner").show();
+
+                                        // make the button not clickable
+                                        $(page).find("#signUpButton").hide();
+
+                                    }
+                                    // check if the email was already taken
+                                    else if (html == "emailtaken") {
+
+                                        // else spit an error message
+                                        $(page).find("#errorFieldCreateAccount").html("Oops! - This email already is already registered to an account");
+
+                                        // show the error field
+                                        $(page).find("#errorFieldCreateAccount").show();
+
+                                        // change the button again
+                                        $(page).find("#signUpButton").html("Sign Up!");
+
+                                    }
+                                    else {
+                                        alert(html);
+                                        // else spit an error message
+                                        $(page).find("#errorFieldCreateAccount").html("Oops! - There was an error, please try again later!");
+
+                                        // show the field
+                                        $(page).find("#errorFieldCreateAccount").show();
+
+                                        // change the button again
+                                        $(page).find("#signUpButton").html("Sign Up!");
+
+                                    }
+                                }
+
+                            });
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    });
+
+    // an app controler for the reset password link
+    App.controller("resetPassword", function (page) {
+
+        // hide the error and success banners
+        $(page).find("#errorFieldResetPassword").hide();
+        $(page).find("#successBanner").hide();
+
+        // function that executes when the button is pressed
+        $(page).find("#resetSubmit").clickable().on("click", function () {
+
+            // check that an email has been filled in
+            if ($(page).find("#resetEmailInput").val() == "") {
+
+                // else spit an error message
+                $(page).find("#errorFieldResetPassword").html("Oops! - Please enter an email");
+
+                // show the error field
+                $(page).find("#errorFieldResetPassword").show();
+            }
+            else {
+                // make an ajax call to try to reset the user's password
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/resetPassword.php",
+                    data: "emailInput="+$(page).find("#resetEmailInput").val(),
+                    beforeSend: function () {
+
+                        // change the button to loading
+                        $(page).find("#resetSubmit").html("Loading...");
+
+                        // hide the error div if it is still there
+                        $(page).find("#errorFieldResetPassword").hide();
+                    },
+                    success: function(html) {
+
+                        // sign up was a sucess
+                        if (html == "success") {
+
+                            // tell the user they have been signed up and that an email was sent to their email
+                            $(page).find("#successBanner").html("Success! - An email has been sent with instructions on how to reset your email");
+
+                            $(page).find("#successBanner").show();
+
+                            // make the button not clickable
+                            $(page).find("#resetSubmit").hide();
+
+                        }
+                        // check if the email was already taken
+                        else if (html == "notvalid") {
+
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - This email isn't registered");
+
+                            // show the error field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+
+                        }
+                        else if (html == "alreadyrequested") {
+
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - This email has already had a password reset requested");
+
+                            // show the error field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+                        }
+                        else {
+                            alert(html);
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - There was an error, please try again later!");
+
+                            // show the field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+
+                        }
+                    }
+
+                });
+            }
+        });
 
     });
 

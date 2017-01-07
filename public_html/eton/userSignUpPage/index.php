@@ -263,7 +263,7 @@
             }
             // if the query was not executed kill the script
             else {
-                die("Error connecting to database".mysqli_connect_error());
+                die("Error connecting to database");
             }
         }
       }
