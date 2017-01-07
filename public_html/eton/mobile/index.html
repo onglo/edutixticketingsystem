@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>My App</title>
+        <title>Edutix</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
         <link rel="stylesheet" href="app.min.css">
         <style>
@@ -51,6 +51,11 @@
     </head>
 
     <body>
+
+        <!-- jquery script -->
+        <script src="zepto.js"></script>
+        <script src="app.min.js"></script>
+
         <div class="app-page" data-page="mainPage">
 
             <div class="app-topbar blue">
@@ -58,6 +63,9 @@
 
                 <!-- a button to logout -->
                 <div class="right app-button" id="logoutButton">Log Out</div>
+
+                <!-- a button to create a new event -->
+                <div class="left app-button" data-target="createEvent">+</div>
 
             </div>
 
@@ -98,9 +106,59 @@
             </div>
         </div>
 
-    <!-- jquery script -->
-    <script src="zepto.js"></script>
-    <script src="app.min.js"></script>
+        <!-- a page to create a new event -->
+        <div class="app-page" data-page="createEvent">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Host An Event</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back data-autotitle>Cancel</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section for the inputs that we need -->
+                <div class="app-section">
+                    <!-- an input for the name of the event -->
+                    <input type="text" class="app-input" id="titleInput" placeholder="What is the name of your event?" />
+                </div>
+
+                <!-- an app section for the text area -->
+                <div class="app-section">
+                    <!-- an input for the description of the event (textarea) -->
+                    <textarea class="app-input" id="descInput" placeholder="Write a short description of your event"></textarea>
+                </div>
+
+                <!-- an app section for date and time -->
+                <div class="app-section">
+
+                    <p class="app-input" style="color:#A9A9A9;">When is your event?</p>
+                    <!-- an input for the name of the event -->
+                    <input type="datetime-local" class="app-input" id="dateInput" />
+                    <!-- a script to autofill the date input -->
+                    <script type="text/javascript">
+
+                    // get the current date
+                    var currentDate = new Date();
+                    currentDate = currentDate.toISOString().split("T")[0];
+                    // set the input's deafult date to the current date and the minium date to the current time
+                    $("#dateInput").attr("value", currentDate + "T13:00");
+
+                    // set the min value to be today
+                    var currentDate = new Date();
+                    currentDate = currentDate.toISOString()
+                    $("#dateInput").attr("min", currentDate.substring(0,16));
+                    </script>
+                </div>
+
+
+            </div>
+        </div>
+
     <script>
 
     App.controller('mainPage', function (page) {
