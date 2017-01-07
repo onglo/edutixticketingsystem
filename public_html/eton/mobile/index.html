@@ -42,7 +42,19 @@
             background-color: orange;
             color: white;
         }
-
+        #errorField {
+            background-color: red;
+            color: white;
+        }
+        .orange {
+            background-color: orange;
+        }
+        #forgotPasswordLink {
+            float: right;
+        }
+        #signUpLink {
+            float: left;
+        }
         </style>
 
         <!-- recaptcha-->
@@ -103,6 +115,15 @@
 
                 </div>
 
+                <!-- a paragraph that will have the two options -->
+                <div class="app-section" style="clear:both;">
+
+                    <p id="signUpLink">Don't have an account?</p>
+
+                    <p id="forgotPasswordLink">Forgot Password?</p>
+
+                </div>
+
             </div>
         </div>
 
@@ -120,6 +141,9 @@
 
             <!-- the main content of the page -->
             <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorField"></p>
 
                 <!-- an app section for the inputs that we need -->
                 <div class="app-section">
@@ -153,8 +177,43 @@
                     currentDate = currentDate.toISOString()
                     $("#dateInput").attr("min", currentDate.substring(0,16));
                     </script>
+
                 </div>
 
+                <!-- an app section for the location -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" type="text" id="locationInput" placeholder="Where is your event located?" />
+                </div>
+
+                <!-- an app section for the event host name -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" type="text" id="hostNameInput" placeholder="What is the name of the organiser of the event?" />
+                </div>
+
+                <!-- an app section for the is ticketed question -->
+                <div class="app-section">
+
+                    <!-- a label asking the user the question -->
+                    <p class="app-input" style="color:#A9A9A9;">Is the event ticketed? (tap)</p>
+
+                    <!-- a menu where the user can select their choice -->
+                    <select name="isTicketed" id="isTicketed" class="app-input">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+
+                </div>
+
+                <!-- an app section for the submit button -->
+                <div class="app-section">
+
+                    <!-- a create event button -->
+                    <div class="app-button green" id="createEventButton">Create Event!</div>
+                </div>
 
             </div>
         </div>
@@ -179,7 +238,7 @@
                 }
             }
 
-        })
+        });
 
         // function that is executed when the logout button is pressed
         $(page).find("#logoutButton").clickable().on('click', function() {
@@ -205,7 +264,6 @@
         });
 
         $(page).on("appShow", function () {
-
             // an ajax call to load up all of the events
             $.ajax({
                 type: "POST",
@@ -227,27 +285,33 @@
 
                         // initialise the datebanner to be yesterday
                         var oldDate = new Date();
-                         oldDate.setDate(oldDate.getDate()-1);
+                        oldDate.setDate(oldDate.getDate()-1);
 
                         // loop through each value in this array
                         for (var event = 0; event < events.length; event++) {
 
-                            var date = new Date(events[event][3]);
+                            var date = events[event][3].slice(0,10);
+                            date = new Date(date);
 
                             // check if this date is greater than the current day we are on
                             if (date > oldDate) {
                                 // generate a new banner for this day
                                 var dateToUse = date.toDateString().slice(0,-5);
-                                $(page).find("#mainPageBody").append("<p class='app-section dateBanner'>"+dateToUse+"</p>");
+                                $(page).find("#mainPageBody").append("<p class='app-section dateBanner orange'>"+dateToUse+"</p>");
 
                                 // set this as the old date
                                 oldDate = date;
                             }
 
-                            date = date.toDateString().slice(0,-5);
+                            // formate the date we will use
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // format the time we will use
+                            var timeToUse = new Date(events[event][3]);
+                            timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div we will insert
-                            var divToInsert = $('<div class="app-section" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+date+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment">'+events[event][2]+'</h3><h3 class="location eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
+                            var divToInsert = $('<div class="app-section" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment">'+events[event][2]+'</h3><h3 class="location eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#mainPageBody").append(divToInsert);
@@ -275,7 +339,7 @@
             if ($(page).find("#passwordInput").val() == "" || $(page).find("#emailInput").val() == "") {
 
                 // if they are add this to the error div
-                $(page).find("#errorField").html("Error - One or more of the fields are empty");
+                $(page).find("#errorField").html("Oops! - One or more of the fields are empty");
 
                 // show the field
                 $(page).find("#errorField").show();
@@ -288,7 +352,7 @@
                 if (!pattern.test($(page).find("#emailInput").val())) {
 
                     // if they are add this to the error div
-                    $(page).find("#errorField").html("Error - Invalid Email");
+                    $(page).find("#errorField").html("Oops! - Invalid Email");
 
                     // show the field
                     $(page).find("#errorField").show();
@@ -318,7 +382,7 @@
                             else {
 
                                 // else spit an error message
-                                $(page).find("#errorField").html(html);
+                                $(page).find("#errorField").html("Oops! - There was an error, please try again later!");
 
                                 // show the field
                                 $(page).find("#errorField").show();
@@ -335,6 +399,88 @@
                 return false;
             }
         });
+    });
+
+    // an app controller for the host an event page
+    App.controller("createEvent", function (page) {
+
+        // initially hide the errors box
+        $(page).find("#errorField").hide();
+
+        // an ajax request to check if a user is currently logged in
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
+
+        // function that will execute when the create event button is pressed
+        $(page).find("#createEventButton").clickable().on('click', function() {
+
+            // first, check if any of the fields are empty
+            if ($(page).find("#titleInput").val() == "" || $(page).find("#descInput").val() == "" || $(page).find("#locationInput").val() == "" || $(page).find("#hostNameInput").val() == "") {
+                alert($(page).find("#dateInput").val())
+
+                // if they are add this to the error div
+                $(page).find("#errorField").html("Oops! - One or more of the fields are empty");
+
+                // show the field
+                $(page).find("#errorField").show();
+            }
+            else {
+
+                // create the event via an ajax script
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/createEvent.php",
+                    data: "titleInput="+$(page).find("#titleInput").val()+"&descInput="+$(page).find("#descInput").val()+"&dateInput="+$(page).find("#dateInput").val()+"&hostName="+$(page).find("#hostNameInput").val()+"&locationInput="+$(page).find("#locationInput").val()+"&isTicketed="+$(page).find("#isTicketed").val(),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        $(page).find("#createEventButton").html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the event was created
+                        if (html == "success") {
+
+                            // redirect the user to the events page
+                            App.load("mainPage");
+
+                        }
+                        else {
+
+                            // add the error to the error field
+                            $(page).find("#errorField").html("Oops! - There was an error, please try again later!");
+
+                            // show the field
+                            $(page).find("#errorField").show();
+
+                            // change the text of the button
+                            $(page).find("#createEventButton").html("Create Event!");
+
+                        }
+                    }
+
+                });
+            }
+
+        });
+
+
     });
 
     try {
