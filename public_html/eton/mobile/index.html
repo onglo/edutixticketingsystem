@@ -330,6 +330,31 @@
             </div>
         </div>
 
+        <!-- a page to find out more about an event -->
+        <div class="app-page" data-page="eventInfo">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+
+                <!-- this topbar will be populated with the name of the event-->
+                <div class="app-title" id="eventTitleHolder">My Awesome Event</div>
+
+                <!-- a button to go back -->
+                <div class="app-button" data-back data-autotitle>Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section for the event -->
+                <div class="app-section" id="eventInfoBanner">
+                </div>
+
+            </div>
+
+        </div>
+
     <script>
 
     App.controller('mainPage', function (page) {
@@ -375,7 +400,7 @@
 
         });
 
-        $(page).on("appShow", function () {
+        $(page).on("appReady", function () {
             // an ajax call to load up all of the events
             $.ajax({
                 type: "POST",
@@ -385,7 +410,7 @@
 
                     // if there are no events to show display this to the user
                     if (html == "none") {
-                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, there aren't any events to show</p>");
+                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, there aren't any events to show!</p>");
                     }
                     else if (html == "error" || html == "")  {
                         // if there was an error tell the user this
@@ -423,12 +448,21 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div we will insert
-                            var divToInsert = $('<div class="app-section" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment">'+events[event][2]+'</h3><h3 class="location eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#mainPageBody").append(divToInsert);
 
                         }
+
+                        // code that executes when the event blocks are clicked on
+                        $(page).find(".eventBlock").clickable().on('click', function() {
+
+                            // load the event details page and pass all of the info about the event to it
+                            App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html()]});
+
+                        });
+
                     }
 
                 }
@@ -830,6 +864,39 @@
                 });
             }
         });
+
+    });
+
+    // the page controller for the eventInfo page
+    App.controller("eventInfo", function (page, data) {
+
+        // an ajax request to check if a user is currently logged in
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
+
+        // prepare a the content that we will insert into the main page
+        var content = "<h4 class='eventDate eventSegment'>"+data.data[1]+"</h4><br /><h4 class='eventHost eventSegment'>"+data.data[3]+"</h4><br /><br /><h3 class='eventDesc eventSegment'>"+data.data[4]+"</h3><br /><br /><h3 class='eventLocation eventSegment'>"+data.data[5]+"</h3>";
+
+        // insert this into the app section
+        $(page).find("#eventInfoBanner").html(content);
+
+        // change the title of the page to the title of the event
+        $(page).find("#eventTitleHolder").html(data.data[2]);
 
     });
 
