@@ -2,6 +2,11 @@
 
 require_once "/home/sites/edutix.com/config/config.php";
 
+// start a session if there isn't one already
+if (session_id() == "") {
+    session_start();
+}
+
 // connect to our database
 $link = mysqli_connect($dbServer, $dbUsername, $dbPassword, $dbUsername);
 
@@ -33,6 +38,20 @@ if ($result = mysqli_query($link, $query)) {
         array_push($temp, decryptEventData($data["salt"], $data["eventLocation"]));
         array_push($temp, decryptEventData($data["salt"], $data["eventHost"]));
 
+        // put the user's events into an array
+        $userEvents = explode(".", $_SESSION["events"]);
+
+        // initialise the field in the array
+        array_push($temp, "false");
+
+        // loop through each of
+        foreach ($userEvents as $event) {
+            // check if the user is giong to this event
+            if ($data["id"] == $event) {
+                $temp[6] = "true";
+            }
+        }
+
         // add this data to the array
         array_push($resultData, $temp);
 
@@ -48,9 +67,24 @@ if ($result = mysqli_query($link, $query)) {
             array_push($temp, decryptEventData($data["salt"], $data["eventLocation"]));
             array_push($temp, decryptEventData($data["salt"], $data["eventHost"]));
 
+            // put the user's events into an array
+            $userEvents = explode(".", $_SESSION["events"]);
+
+            // initialise the field in the array
+            array_push($temp, "false");
+
+            // loop through each of
+            foreach ($userEvents as $event) {
+                // check if the user is giong to this event
+                if ($data["id"] == $event) {
+                    $temp[6] = "true";
+                }
+            }
+
             // add this data to the array
             array_push($resultData, $temp);
         }
+
         echo (json_encode($resultData));
 
     }

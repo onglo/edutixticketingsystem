@@ -74,6 +74,23 @@
         #passwordPrompt {
             font-size: 12px;
         }
+        .greyText {
+            color: grey;
+        }
+        #goingToEventBanner {
+            background-color: #42e5f4;
+            color: white;
+            text-align: center;
+        }
+        #homepageBottomBar {
+            position: absolute !important;
+            bottom: 0 !important;
+        }
+        #mainPageBody {
+        }
+        #blankSpace {
+            width: 100%;
+        }
         </style>
 
         <!-- recaptcha-->
@@ -97,6 +114,14 @@
 
                 <!-- a button to create a new event -->
                 <div class="left app-button" data-target="createEvent">+</div>
+
+            </div>
+
+            <!-- a bottom bar for the event-->
+            <div class="app-topbar black" id="homepageBottomBar">
+
+                <!-- a button to view my events-->
+                <div class="right app-button" id="logoutButton">My Events</div>
 
             </div>
 
@@ -406,7 +431,15 @@
                 type: "POST",
                 url: "scripts/fetchEvents.php",
                 data: "startOffset=0",
+                beforeSend: function () {
+
+                    // add in a small loading banner
+                    $(page).find("#mainPageBody").html("<p class='app-section'>Loading events...</p>")
+                },
                 success: function(html) {
+
+                    // hide the loading banner
+                    $(page).find("#mainPageBody").html("");
 
                     // if there are no events to show display this to the user
                     if (html == "none") {
@@ -447,19 +480,76 @@
                             var timeToUse = new Date(events[event][3]);
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
-                            // prepare the div we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3></div>');
+                            // check if the user is going to this event
+                            if (events[event][6] == "true") {
+
+                                // prepare the div that says I will attend
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'<span style="float:right;" class="greyText">></span></h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+' style="display:none;">I will attend!</div><p class="app-section" id="goingToEventBanner">You&#39;re going to this event!</p></div>');
+
+                            }
+                            else {
+
+                                // prepare the div we will insert
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'<span style="float:right;" class="greyText">></span></h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+'>I will attend!</div></div>');
+                            }
 
                             // insert a div into the page for this event
                             $(page).find("#mainPageBody").append(divToInsert);
 
                         }
 
+                        // at the end add a div of blank space
+                        $(page).find("#mainPageBody").append('<div id="blankSpace"></div>');
+
+                        // set the height of this to be the height of the bottom banner
+                        $(page).find("#blankSpace").css("height", $(page).find("#homepageBottomBar").css("height"));
+
                         // code that executes when the event blocks are clicked on
                         $(page).find(".eventBlock").clickable().on('click', function() {
 
                             // load the event details page and pass all of the info about the event to it
                             App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html()]});
+
+                        });
+
+                        // code that is executed when the I will attend button is pressed
+                        $(page).find("#attendEventButton").clickable().on("click", function() {
+
+                            // store a reference to the button
+                            var button = $(this);
+                            alert(button.data("id"));
+
+                            // prepare an ajax query that will attempt to update this in the database
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/attendEvent.php",
+                                data: "id="+button.data("id"),
+                                // function that will execute before the data is sent
+                                beforeSend: function () {
+                                    // change the button to loading
+                                    button.html("Loading...");
+                                },
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // remove the button
+                                        button.hide();
+
+                                        // add in a banner telling the user that they are going to this event
+                                        $(page).find(".eventBlock[data-id='"+button.data('id')+"']").append("<p class='app-section' id='goingToEventBanner'>You're going to this event!</p>");
+
+                                    }
+                                    else {
+
+                                        // change the button back
+                                        button.html("I will attend!");
+                                    }
+
+                                }
+                            });
 
                         });
 
@@ -593,7 +683,6 @@
 
             // first, check if any of the fields are empty
             if ($(page).find("#titleInput").val() == "" || $(page).find("#descInput").val() == "" || $(page).find("#locationInput").val() == "" || $(page).find("#hostNameInput").val() == "") {
-                alert($(page).find("#dateInput").val())
 
                 // if they are add this to the error div
                 $(page).find("#errorFieldCreateEvent").html("Oops! - One or more of the fields are empty");
@@ -748,7 +837,6 @@
 
                                     }
                                     else {
-                                        alert(html);
                                         // else spit an error message
                                         $(page).find("#errorFieldCreateAccount").html("Oops! - There was an error, please try again later!");
 
@@ -848,7 +936,6 @@
                             $(page).find("#resetSubmit").html("Sign Up!");
                         }
                         else {
-                            alert(html);
                             // else spit an error message
                             $(page).find("#errorFieldResetPassword").html("Oops! - There was an error, please try again later!");
 

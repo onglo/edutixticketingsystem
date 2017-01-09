@@ -8,7 +8,7 @@ if (session_id() == "") {
 }
 
 // first check if all of the user's info is present
-if (empty($_SESSION["userID"]) or empty($_SESSION["privateKey"]) ) {
+if (empty($_SESSION["userID"]) or empty($_SESSION["privateKey"]) or empty($_SESSION["idNumber"])) {
 
     // deny authentication
     session_unset();
