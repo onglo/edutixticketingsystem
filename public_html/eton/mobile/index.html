@@ -121,7 +121,10 @@
             <div class="app-topbar black" id="homepageBottomBar">
 
                 <!-- a button to view my events-->
-                <div class="right app-button" id="logoutButton">My Events</div>
+                <div class="left app-button" id="viewUserEventsButton" data-target="viewUserEvents">My Event List</div>
+
+                <!-- a button to manage the events the user is hosting-->
+                <div class="right app-button" id="manageUserEventsButton" data-target="manageUserEvents">Manage my Events</div>
 
             </div>
 
@@ -176,7 +179,7 @@
                 <div class="app-title">Host An Event</div>
 
                 <!-- a button to cancel / go back -->
-                <div class="app-button" data-back data-autotitle>Cancel</div>
+                <div class="app-button" data-back>Cancel</div>
 
             </div>
 
@@ -267,7 +270,7 @@
                 <div class="app-title">Create An Account</div>
 
                 <!-- a button to cancel / go back -->
-                <div class="app-button" data-back data-autotitle>Back</div>
+                <div class="app-button" data-back>Back</div>
 
             </div>
 
@@ -325,7 +328,7 @@
                 <div class="app-title">Reset Your Password</div>
 
                 <!-- a button to cancel / go back -->
-                <div class="app-button" data-back data-autotitle>Back</div>
+                <div class="app-button" data-back>Back</div>
 
             </div>
 
@@ -365,7 +368,7 @@
                 <div class="app-title" id="eventTitleHolder">My Awesome Event</div>
 
                 <!-- a button to go back -->
-                <div class="app-button" data-back data-autotitle>Back</div>
+                <div class="app-button" data-back>Back</div>
 
             </div>
 
@@ -375,6 +378,47 @@
                 <!-- an app section for the event -->
                 <div class="app-section" id="eventInfoBanner">
                 </div>
+
+            </div>
+
+        </div>
+
+        <!-- a page where the user can view their saved events -->
+        <div class="app-page" data-page="viewUserEvents">
+
+            <!-- the topbar of the app-->
+            <div class="app-topbar blue">
+
+                <!--a title for page -->
+                <div class="app-title">My Saved Events</div>
+
+                <!-- a back button -->
+                <div class="app-button" data-back="true">Back</div>
+
+            </div>
+
+            <!-- the main content of the app -->
+            <div class="app-content">
+            </div>
+
+        </div>
+
+        <!-- a page where the user can manage the events that they have hosted-->
+        <div class="app-page" data-page="manageUserEvents">
+
+            <!-- the top bar of the app -->
+            <div class="app-topbar blue">
+
+                <!-- a title for the page -->
+                <div class="app-title">Manage Your Events</div>
+
+                <!-- a back button -->
+                <div class="app-button" data-back="true">Back</div>
+            </div>
+
+            <!-- the main content of the app -->
+            <div class="app-content">
+
 
             </div>
 
@@ -984,6 +1028,54 @@
 
         // change the title of the page to the title of the event
         $(page).find("#eventTitleHolder").html(data.data[2]);
+
+    });
+
+    // the page controller for the user's event list
+    App.controller("viewUserEvents", function(page) {
+
+        // an ajax request to check if a user is currently logged in
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
+
+    });
+
+    // the page controller to manage the users events
+    App.controller("manageUserEvents", function(page) {
+
+        // an ajax request to check if a user is currently logged in
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
 
     });
 

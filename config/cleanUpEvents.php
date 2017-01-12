@@ -12,10 +12,10 @@ if(mysqli_connect_error()) {
 };
 
 // prepare a query that will move the old events from one table to the archive TokyoTyrantTable
-$moveQuery = "INSERT INTO `etonEventsArchive` SELECT * FROM `etonEvents` WHERE `eventDate` < CURDATE()";
+$moveQuery = "INSERT INTO `etonEventsArchive` SELECT * FROM `etonEvents` WHERE `eventDate` < NOW()";
 
 // prepare a query that will delete the events we just moved
-$deleteQuery = "DELETE FROM `etonEvents` WHERE `eventDate` < CURDATE()";
+$deleteQuery = "DELETE FROM `etonEvents` WHERE `eventDate` < NOW()";
 
 // attept to execute the query
 if (mysqli_query($link, $moveQuery)) {
