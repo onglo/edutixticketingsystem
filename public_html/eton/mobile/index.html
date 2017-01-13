@@ -427,6 +427,7 @@
     <script>
 
     App.controller('mainPage', function (page) {
+
         // an ajax request to check if a user is currently logged in
         $.ajax({
 
@@ -470,6 +471,7 @@
         });
 
         $(page).on("appReady", function () {
+
             // an ajax call to load up all of the events
             $.ajax({
                 type: "POST",
@@ -524,17 +526,27 @@
                             var timeToUse = new Date(events[event][3]);
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
+                            // check if the user has flagged this event
+                            if (events[event][7] == "true") {
+
+                                // change the source to bookmarked
+                                var source = "bookmarked.png";
+                            }
+                            else {
+                                var source = "notBookmarked.png"
+                            }
+
                             // check if the user is going to this event
                             if (events[event][6] == "true") {
 
                                 // prepare the div that says I will attend
-                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'<span style="float:right;" class="greyText">></span></h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+' style="display:none;">I will attend!</div><p class="app-section" id="goingToEventBanner">You&#39;re going to this event!</p></div>');
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+' style="display:none;">I will attend!</div><p class="app-section" id="goingToEventBanner">You&#39;re going to this event!</p></div>');
 
                             }
                             else {
 
                                 // prepare the div we will insert
-                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'</h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'<span style="float:right;" class="greyText">></span></h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+'>I will attend!</div></div>');
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+'>I will attend!</div></div>');
                             }
 
                             // insert a div into the page for this event
@@ -547,6 +559,39 @@
 
                         // set the height of this to be the height of the bottom banner
                         $(page).find("#blankSpace").css("height", $(page).find("#homepageBottomBar").css("height"));
+
+                        // function that executes when the bookmark is pressed
+                        $(page).find("#bookmarkImage").clickable().on("click", function() {
+
+                            // save the button so that we can use it later
+                            var bookmarkButton = $(this);
+
+                            // make an ajax call to the flag event script
+                            // prepare an ajax query that will attempt to update this in the database
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/flagEvent.php",
+                                data: "id="+bookmarkButton.data("id"),
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // mark the event as flageed
+                                        bookmarkButton.attr("src", "bookmarked.png");
+
+                                    }
+                                    else {
+
+                                        // change the button back
+                                        alert(html);
+                                    }
+
+                                }
+                            });
+
+                        });
 
                         // code that executes when the event blocks are clicked on
                         $(page).find(".eventBlock").clickable().on('click', function() {
@@ -561,7 +606,6 @@
 
                             // store a reference to the button
                             var button = $(this);
-                            alert(button.data("id"));
 
                             // prepare an ajax query that will attempt to update this in the database
                             $.ajax({
@@ -1082,7 +1126,7 @@
     try {
         App.restore();
     } catch (err) {
-        App.load('mainPage');
+        App.load('home');
     }
     </script>
   </body>

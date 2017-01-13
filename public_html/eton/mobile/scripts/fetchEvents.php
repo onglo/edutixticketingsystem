@@ -41,14 +41,27 @@ if ($result = mysqli_query($link, $query)) {
         // put the user's events into an array
         $userEvents = explode(".", $_SESSION["events"]);
 
+        // put the user's flagged events into array
+        $userFlagged = explode(".", $_SESSION["flagged"]);
+
         // initialise the field in the array
         array_push($temp, "false");
+        array_push($temp, "false");
 
-        // loop through each of
+        // loop through each of the events
         foreach ($userEvents as $event) {
             // check if the user is giong to this event
             if ($data["id"] == $event) {
                 $temp[6] = "true";
+            }
+        }
+
+        // loop through each of the flagged events
+        foreach ($userFlagged as $flagged) {
+
+            // check if the user has flageed this event
+            if ($data["id"] == $flagged) {
+                $temp[7] = "true";
             }
         }
 
@@ -70,14 +83,27 @@ if ($result = mysqli_query($link, $query)) {
             // put the user's events into an array
             $userEvents = explode(".", $_SESSION["events"]);
 
+            // put the user's flagged events into array
+            $userFlagged = explode(".", $_SESSION["flagged"]);
+
             // initialise the field in the array
             array_push($temp, "false");
+            array_push($temp, "false");
 
-            // loop through each of
+            // loop through each of the events
             foreach ($userEvents as $event) {
                 // check if the user is giong to this event
                 if ($data["id"] == $event) {
                     $temp[6] = "true";
+                }
+            }
+
+            // loop through each of the flagged events
+            foreach ($userFlagged as $flagged) {
+
+                // check if the user has flageed this event
+                if ($data["id"] == $flagged) {
+                    $temp[7] = "true";
                 }
             }
 
