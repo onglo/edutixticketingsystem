@@ -368,7 +368,7 @@
                 <div class="app-title" id="eventTitleHolder">My Awesome Event</div>
 
                 <!-- a button to go back -->
-                <div class="app-button" data-back>Back</div>
+                <div class="app-button" id="moreInfoBackButton">Back</div>
 
             </div>
 
@@ -621,7 +621,7 @@
                         $(page).find(".eventBlock").clickable().on('click', function() {
 
                             // load the event details page and pass all of the info about the event to it
-                            App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html()]});
+                            App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id")]});
 
                         });
 
@@ -658,7 +658,6 @@
 
                                         }
                                         else {
-                                            alert(html)
                                             // change the button back
                                             buttonPressed.html("You're going to this event!");
                                         }
@@ -1127,14 +1126,169 @@
 
         });
 
+        // function that is called when the back button is pressed
+        $(page).find("#moreInfoBackButton").clickable().on('click', function() {
+
+            // redirect the user back home
+            App.load("mainPage");
+
+        });
+
         // prepare a the content that we will insert into the main page
-        var content = "<h4 class='eventDate eventSegment'>"+data.data[1]+"</h4><br /><h4 class='eventHost eventSegment'>"+data.data[3]+"</h4><br /><br /><h3 class='eventDesc eventSegment'>"+data.data[4]+"</h3><br /><br /><h3 class='eventLocation eventSegment'>"+data.data[5]+"</h3>";
+        var content = "<h4 class='eventDate eventSegment'>"+data.data[1]+"</h4><br /><h4 class='eventHost eventSegment'>"+data.data[3]+"</h4><br /><br /><h3 class='eventDesc eventSegment'>"+data.data[4]+"</h3><br /><br /><h3 class='eventLocation eventSegment'>"+data.data[5]+"</h3><div class='app-button' id='attendEventButton' data-id='"+data.data[7]+"'>"+data.data[6]+"</div></div>";
 
         // insert this into the app section
         $(page).find("#eventInfoBanner").html(content);
 
+        // add the correct class to the attend event button
+        if ($(page).find("#attendEventButton").html() == "I will attend!") {
+
+            // make the button green
+            $(page).find("#attendEventButton").addClass("green");
+
+        }
+        else {
+            // make the button blue
+            $(page).find("#attendEventButton").addClass("goingToEvent");
+        }
+
         // change the title of the page to the title of the event
         $(page).find("#eventTitleHolder").html(data.data[2]);
+
+        // function that executes when the bookmark is pressed
+        $(page).find("#bookmarkImage").clickable().on("click", function() {
+
+            // check if the event is already bookmarked
+            if ($(this).attr("src") == "bookmarked.png") {
+
+                // unflag the event via ajax
+
+                // save the button so that we can use it later
+                var bookmarkButton = $(this);
+
+                // make an ajax call to the flag event script
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/removeFlag.php",
+                    data: "id="+bookmarkButton.data("id"),
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // unflag the event
+                            bookmarkButton.attr("src", "notBookmarked.png");
+
+                        }
+                    }
+                });
+            }
+            else {
+
+                // bookmark this event for the user
+
+                // save the button so that we can use it later
+                var bookmarkButton = $(this);
+
+                // make an ajax call to the flag event script
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/flagEvent.php",
+                    data: "id="+bookmarkButton.data("id"),
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // mark the event as flageed
+                            bookmarkButton.attr("src", "bookmarked.png");
+
+                        }
+                    }
+                });
+            }
+        });
+
+        // code that is executed when the I will attend button is pressed
+        $(page).find("#attendEventButton").clickable().on("click", function() {
+
+            // check if the user is already going to the event
+            if ($(this).html() != "I will attend!") {
+                // store a refernce to the button
+                var buttonPressed = $(this);
+
+                // attempt to update the databases via an ajax request
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/removeAttendEvent.php",
+                    data: "id="+buttonPressed.data("id"),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        buttonPressed.html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // modify the attend event button
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").removeClass("goingToEvent");
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").addClass("green");
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").html("I will attend!");
+
+                        }
+                        else {
+                            // change the button back
+                            buttonPressed.html("You're going to this event!");
+                        }
+
+                    }
+                });
+
+            }
+            else {
+
+                // store a reference to the button
+                var button = $(this);
+
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/attendEvent.php",
+                    data: "id="+button.data("id"),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        button.html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // modify the attend event button
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").removeClass("green");
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").addClass("goingToEvent");
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").html("You're going to this event!");
+
+                        }
+                        else {
+
+                            // change the button back
+                            button.html("I will attend!");
+                        }
+
+                    }
+                });
+            }
+        });
 
     });
 
