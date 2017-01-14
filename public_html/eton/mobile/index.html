@@ -77,9 +77,9 @@
         .greyText {
             color: grey;
         }
-        #goingToEventBanner {
-            background-color: #42e5f4;
-            color: white;
+        .goingToEvent {
+            background-color: #42e5f4 !important;
+            color: white !important;
             text-align: center;
         }
         #homepageBottomBar {
@@ -540,13 +540,13 @@
                             if (events[event][6] == "true") {
 
                                 // prepare the div that says I will attend
-                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+' style="display:none;">I will attend!</div><p class="app-section" id="goingToEventBanner">You&#39;re going to this event!</p></div>');
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" data-id="'+events[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             }
                             else {
 
                                 // prepare the div we will insert
-                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id='+events[event][0]+'>I will attend!</div></div>');
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id="'+events[event][0]+'">I will attend!</div></div>');
                             }
 
                             // insert a div into the page for this event
@@ -612,6 +612,7 @@
                                             bookmarkButton.attr("src", "bookmarked.png");
 
                                         }
+                                    }
                                 });
                             }
                         });
@@ -627,41 +628,80 @@
                         // code that is executed when the I will attend button is pressed
                         $(page).find("#attendEventButton").clickable().on("click", function() {
 
-                            // store a reference to the button
-                            var button = $(this);
+                            // check if the user is already going to the event
+                            if ($(this).html() != "I will attend!") {
 
-                            // prepare an ajax query that will attempt to update this in the database
-                            $.ajax({
+                                // store a refernce to the button
+                                var buttonPressed = $(this);
 
-                                type: "POST",
-                                url: "scripts/attendEvent.php",
-                                data: "id="+button.data("id"),
-                                // function that will execute before the data is sent
-                                beforeSend: function () {
-                                    // change the button to loading
-                                    button.html("Loading...");
-                                },
-                                success: function(html) {
+                                // attempt to update the databases via an ajax request
+                                // prepare an ajax query that will attempt to update this in the database
+                                $.ajax({
 
-                                    // check if the update was successful
-                                    if (html == "success") {
+                                    type: "POST",
+                                    url: "scripts/removeAttendEvent.php",
+                                    data: "id="+buttonPressed.data("id"),
+                                    // function that will execute before the data is sent
+                                    beforeSend: function () {
+                                        // change the button to loading
+                                        buttonPressed.html("Loading...");
+                                    },
+                                    success: function(html) {
 
-                                        // remove the button
-                                        button.hide();
+                                        // check if the update was successful
+                                        if (html == "success") {
 
-                                        // add in a banner telling the user that they are going to this event
-                                        $(page).find(".eventBlock[data-id='"+button.data('id')+"']").append("<p class='app-section' id='goingToEventBanner'>You're going to this event!</p>");
+                                            // modify the attend event button
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").removeClass("goingToEvent");
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").addClass("green");
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").html("I will attend!");
+
+                                        }
+                                        else {
+                                            alert(html)
+                                            // change the button back
+                                            buttonPressed.html("You're going to this event!");
+                                        }
 
                                     }
-                                    else {
+                                });
 
-                                        // change the button back
-                                        button.html("I will attend!");
+                            }
+                            else {
+                                // store a reference to the button
+                                var button = $(this);
+
+                                // prepare an ajax query that will attempt to update this in the database
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "scripts/attendEvent.php",
+                                    data: "id="+button.data("id"),
+                                    // function that will execute before the data is sent
+                                    beforeSend: function () {
+                                        // change the button to loading
+                                        button.html("Loading...");
+                                    },
+                                    success: function(html) {
+
+                                        // check if the update was successful
+                                        if (html == "success") {
+
+                                            // modify the attend event button
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").removeClass("green");
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").addClass("goingToEvent");
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").html("You're going to this event!");
+
+                                        }
+                                        else {
+
+                                            // change the button back
+                                            button.html("I will attend!");
+                                        }
+
                                     }
-
-                                }
-                            });
-
+                                });
+                            }
                         });
 
                     }
