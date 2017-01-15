@@ -413,12 +413,32 @@
                 <div class="app-title">Manage Your Events</div>
 
                 <!-- a back button -->
-                <div class="app-button" data-back="true">Back</div>
+                <div class="app-button" id="manageEventsBackButton">Back</div>
             </div>
 
             <!-- the main content of the app -->
-            <div class="app-content">
+            <div class="app-content" id="managerUserEventsMainBody">
 
+            </div>
+
+        </div>
+
+        <!-- a page where the user can view info about their hosted events -->
+        <div class="app-page" data-page="editUserEvents">
+
+            <!-- the top bar -->
+            <div class="app-topbar blue">
+
+                <!-- this is the app title that will be populated by the title of the event when the user clicks on it -->
+                <div class="app-title" id="editUserEventsTopbar"></div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="editUserEventsGoBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content" id="editUserEventsMainContent">
             </div>
 
         </div>
@@ -830,11 +850,23 @@
         // function that will execute when the create event button is pressed
         $(page).find("#createEventButton").clickable().on('click', function() {
 
+            // store the dates
+            var today = new Date();
+            var dateInput = new Date($("#dateInput").val());
+
             // first, check if any of the fields are empty
             if ($(page).find("#titleInput").val() == "" || $(page).find("#descInput").val() == "" || $(page).find("#locationInput").val() == "" || $(page).find("#hostNameInput").val() == "") {
 
                 // if they are add this to the error div
                 $(page).find("#errorFieldCreateEvent").html("Oops! - One or more of the fields are empty");
+
+                // show the field
+                $(page).find("#errorFieldCreateEvent").show();
+            }
+            // check if the date is valid
+            else if (dateInput < today) {
+                // if they are add this to the error div
+                $(page).find("#errorFieldCreateEvent").html("Oops! - This date isn't valid");
 
                 // show the field
                 $(page).find("#errorFieldCreateEvent").show();
@@ -877,10 +909,7 @@
 
                 });
             }
-
         });
-
-
     });
 
     // the app controller for the create account page
@@ -1623,6 +1652,143 @@
             }
 
         });
+
+        // script that is executed when the back button is pressed
+        $(page).find("#manageEventsBackButton").clickable().on("click", function() {
+            // load the home page
+            App.load("mainPage");
+        });
+
+        $(page).on("appReady", function () {
+
+            // an ajax call to load up all of the events
+            $.ajax({
+                type: "POST",
+                url: "scripts/fetchHostedEvents.php",
+                beforeSend: function () {
+
+                    // add in a small loading banner
+                    $(page).find("#managerUserEventsMainBody").html("<p class='app-section'>Loading events...</p>")
+                },
+                success: function(html) {
+
+                    // remove the loading banner
+                    $(page).find("#managerUserEventsMainBody").html("")
+
+                    // split the data into the active and archived events
+                    var userData = html.split("`@marker@`");
+
+                    // add a banner saying that this is their active events
+                    $(page).find("#managerUserEventsMainBody").append("<p class='app-section orange' style='color:white;text-align:center;'>Your active events:</p>")
+
+                    // check if there are any active events
+                    if (userData[0] != "empty") {
+
+                        // turn the events into a javascript array
+                        var activeEvents = JSON.parse(userData[0])
+
+                        // loop through each event and add it to the page
+                        for (var event = 0; event < activeEvents.length; event++) {
+
+                            // fomrate the date that we will use
+                            var date = activeEvents[event][3].slice(0,10);
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // formate the time that we will use
+                            var timeToUse = new Date(activeEvents[event][3]);
+                            timeToUse = timeToUse.toTimeString().slice(0,5);
+
+                            // prepare the div that we will insert
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            // insert a div into the page for this event
+                            $(page).find("#managerUserEventsMainBody").append(divToInsert);
+                        }
+
+                    }
+                    else {
+
+                        // tell the user that they aren't hosting any active events
+                        $(page).find("#managerUserEventsMainBody").append("<p class='app-section'>You are't currently hosting any events!</p>");
+
+                    }
+
+                    // add a banner saying that this is their archived events
+                    $(page).find("#managerUserEventsMainBody").append("<p class='app-section orange' style='color:white;text-align:center;'>Your archived events:</p>")
+
+                    // check if there are any archived events
+                    if (userData[1] != 'empty') {
+
+                        // turn the events into a javascript array
+                        var archivedEvents = JSON.parse(userData[0])
+
+                        // loop through each event and add it to the page
+                        for (var event = 0; event < archivedEvents.length; event++) {
+
+                            // fomrate the date that we will use
+                            var date = archivedEvents[event][3].slice(0,10);
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // formate the time that we will use
+                            var timeToUse = new Date(archivedEvents[event][3]);
+                            timeToUse = timeToUse.toTimeString().slice(0,5);
+
+                            // prepare the div that we will insert
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            // insert a div into the page for this event
+                            $(page).find("#managerUserEventsMainBody").append(divToInsert);
+                        }
+
+                    }
+                    else {
+                        // tell the user that they aren't hosting any archived events
+                        $(page).find("#managerUserEventsMainBody").append("<p class='app-section'>You don't have any archived events!</p>");
+
+                    }
+
+                    // code that executes when the event blocks are clicked on
+                    $(page).find(".eventBlock").clickable().on('click', function() {
+
+                        // load the event details page and pass all of the info about the event to it
+                        App.load("editUserEvents", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id")]});
+
+                    });
+                }
+            })
+        })
+
+    });
+
+    // an app controller for the edit user events page
+    App.controller("editUserEvents", function(page, data) {
+
+        // authenticate the user
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
+
+        // code that is executed when the back button is pressed
+        $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
+            // go to the manage user events page
+            App.load("manageUserEvents");
+        })
 
     });
 

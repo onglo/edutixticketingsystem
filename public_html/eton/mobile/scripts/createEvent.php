@@ -32,7 +32,7 @@ $eventDate = mysqli_real_escape_string($link, $date);
 $eventLocation = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["locationInput"]));
 $eventHost = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["hostName"]));
 $isTicketed = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["isTicketed"]));
-$createdBy = mysqli_real_escape_string($link, encryptEventData($salt, $_SESSION["userID"]));
+$createdBy = mysqli_real_escape_string($link, $_SESSION["idNumber"]);
 $salt = mysqli_real_escape_string($link, $salt);
 
 // prepare a query that will insert it into the database
