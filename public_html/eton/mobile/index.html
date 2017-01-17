@@ -91,6 +91,10 @@
         #blankSpace {
             width: 100%;
         }
+        .blue {
+            background-color: blue;
+            color: white !important;
+        }
         </style>
 
         <!-- recaptcha-->
@@ -439,6 +443,59 @@
 
             <!-- the main content of the page -->
             <div class="app-content" id="editUserEventsMainContent">
+
+                <!-- a banner telling the user what to do -->
+                <p class="app-section blue">Tap on any of the inputs and press update to change the event info!</p>
+
+                <!-- an app section for the title -->
+                <div class="app-section">
+                    <!-- an input with the current event title -->
+                    <label for="titleInput" class="greyText">Title:</label>
+                    <input id="titleInput" class="app-input" type="text" value="Tech Club" />
+                </div>
+
+                <!-- an app section for the desc -->
+                <div class="app-section">
+                    <!-- an input that has the current desc -->
+                    <label for="titleInput" class="greyText">Description:</label>
+                    <textarea class="app-input" id="descriptionInput">This is the event description</textarea>
+                </div>
+
+                <!-- an app section for the event date + time -->
+                <div class="app-section">
+                    <!-- the input with the date and time -->
+                    <label for="titleInput" class="greyText">Event date and time:</label>
+                    <input type="datetime-local" class="app-input" id="dateInput" />
+                </div>
+
+                <!-- a div that has the location of the event -->
+                <div class="app-section">
+                    <!-- the event input -->
+                    <label for="titleInput" class="greyText">Location:</label>
+                    <input class="app-input" type="text" id="locationInput" value="CIRL - Creative space" />
+                </div>
+
+                <!-- an app section for the host name -->
+                <div class="app-section">
+                    <!-- an input that has the current host name -->
+                    <label for="titleInput" class="greyText">Host Name:</label>
+                    <input class="app-input" type="text" id="hostNameInput" value="Edouard Long" />
+                </div>
+
+                <!-- an app section for the is tickted option -->
+                <div class="app-section">
+                    <!-- a select for the option -->
+                    <label for="titleInput" class="greyText">Ticketed:</label>
+                    <select name="isTicketed" id="isTicketed" class="app-input">
+                        <option id="noOption" selected="">No</option>
+                        <option id="yesOption" selected="">Yes</option>
+                    </select>
+                </div>
+
+                <!-- a button that the user can press to send the info -->
+                <div class="app-section">
+                    <div class="app-button green" id="updateButton">Update Event Info</div>
+                </div>
             </div>
 
         </div>
@@ -1700,7 +1757,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1721,7 +1778,7 @@
                     if (userData[1] != 'empty') {
 
                         // turn the events into a javascript array
-                        var archivedEvents = JSON.parse(userData[0])
+                        var archivedEvents = JSON.parse(userData[1])
 
                         // loop through each event and add it to the page
                         for (var event = 0; event < archivedEvents.length; event++) {
@@ -1736,7 +1793,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1753,8 +1810,7 @@
                     $(page).find(".eventBlock").clickable().on('click', function() {
 
                         // load the event details page and pass all of the info about the event to it
-                        App.load("editUserEvents", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id")]});
-
+                        App.load("editUserEvents", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed")]});
                     });
                 }
             })
@@ -1784,12 +1840,41 @@
 
         });
 
+        // hide the main page of the body until we are done loading
+        $(page).find(".app-content").hide();
+
         // code that is executed when the back button is pressed
         $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
             // go to the manage user events page
             App.load("manageUserEvents");
         })
 
+        $(page).on("appReady", function() {
+
+            // change the title of the page to be the title of the event
+            $(page).find("#editUserEventsTopbar").html(data.data[2]);
+
+            // update all of the fields on currently on the page
+            $(page).find("#titleInput").val(data.data[2]);
+            $(page).find("#descriptionInput").val(data.data[4]);
+            $(page).find("#dateInput").val(data.data[8]);
+            $(page).find("#locationInput").val(data.data[5]);
+            $(page).find("#hostNameInput").val(data.data[3]);
+
+            // check if the event is ticketed
+            if (data.data[9] == "false") {
+
+                $(page).find("#noOption").attr("selected", "selected");
+                $(page).find("#yesOption").removeAttr("selected");
+            }
+            else {
+                $(page).find("#yesOption").attr("selected", "selected");
+                $(page).find("#yesOption").removeAttr("selected");
+            }
+
+            // show the page when we are ready
+            $(page).find(".app-content").show();
+        })
     });
 
     try {
