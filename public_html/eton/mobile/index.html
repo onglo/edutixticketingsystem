@@ -500,6 +500,26 @@
 
         </div>
 
+        <!-- a page where the user can view analytics about their app -->
+        <div class="app-page" data-page="eventAnalyticsPage">
+
+            <!-- the app topbar -->
+            <div class="app-topbar blue">
+
+                <!-- the titile for the page -->
+                <div class="app-title" id="analyticsTitle"></div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="editUserEventsGoBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+            </div>
+
+        </div>
+
     <script>
 
     App.controller('mainPage', function (page) {
@@ -1810,7 +1830,7 @@
                     $(page).find(".eventBlock").clickable().on('click', function() {
 
                         // load the event details page and pass all of the info about the event to it
-                        App.load("editUserEvents", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed")]});
+                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed")]});
                     });
                 }
             })
@@ -1845,8 +1865,10 @@
 
         // code that is executed when the back button is pressed
         $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
-            // go to the manage user events page
-            App.load("manageUserEvents");
+
+            // go to the event analytics page
+            App.load("eventAnalyticsPage", {data: data.data});
+
         })
 
         $(page).on("appReady", function() {
@@ -1875,6 +1897,51 @@
             // show the page when we are ready
             $(page).find(".app-content").show();
         })
+    });
+
+    // an app controller for the analytics page
+    App.controller("eventAnalyticsPage", function(page, data) {
+
+        // authenticate the user
+        $.ajax({
+
+            type: "POST",
+            url: "scripts/authenticate.php",
+            data: "",
+            success: function(html) {
+
+                // check if the user isn't authenticated
+                if (html != "true") {
+
+                    // redirect the user
+                    App.load("home");
+
+                }
+            }
+
+        });
+
+        // code that is executed when the back button is pressed
+        $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
+            // go to the manage user events page
+            App.load("manageUserEvents");
+        })
+
+        // change the title of the page to be the title of the event
+        $(page).find("#analyticsTitle").html(data.data[2]);
+
+        // prepare a button that will insert into the page to edit the event
+        var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>'
+
+        // insert the button
+        $(page).find(".app-content").append(buttonToInsert);
+
+        // functiont that is executed when the button is pressed
+        $(page).find("#editEventButton").clickable().on("click", function() {
+            // load the edit event page
+            App.load("editUserEvents", {data: data.data});
+        })
+
     });
 
     try {
