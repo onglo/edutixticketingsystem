@@ -18,10 +18,10 @@ if(mysqli_connect_error()) {
 };
 
 // a query to get the events that the user has hosted that are active
-$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt` FROM `etonEvents` WHERE `createdBy` = ".mysqli_real_escape_string($link,$_SESSION["idNumber"]);
+$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEvents` WHERE `createdBy` = ".mysqli_real_escape_string($link,$_SESSION["idNumber"]);
 
 // a query to get the archived events that the user has hosted
-$archivedQuery = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt` FROM `etonEventsArchive` WHERE `createdBy` = ".mysqli_real_escape_string($link, $_SESSION["idNumber"]);
+$archivedQuery = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEventsArchive` WHERE `createdBy` = ".mysqli_real_escape_string($link, $_SESSION["idNumber"]);
 
 // attempt to exeucte the first query
 if ($result = mysqli_query($link, $query)) {
@@ -72,6 +72,9 @@ if ($result = mysqli_query($link, $query)) {
                     $temp[7] = "true";
                 }
             }
+
+            // get the number of people going to the event
+            array_push($temp, $data["numberOfPeopleGoing"]);
 
             // add this data to the array
             array_push($activeEvents, $temp);
@@ -137,6 +140,9 @@ if ($result = mysqli_query($link, $archivedQuery)) {
                     $temp[7] = "true";
                 }
             }
+
+            // get the number of people going to the event
+            array_push($temp, $data["numberOfPeopleGoing"]);
 
             // add this data to the array
             array_push($archivedEvents, $temp);

@@ -1777,7 +1777,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+' data-people='+activeEvents[event][8]+' data-location='+activeEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1813,7 +1813,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+' data-people='+archivedEvents[event][8]+' data-location='+archivedEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1830,7 +1830,7 @@
                     $(page).find(".eventBlock").clickable().on('click', function() {
 
                         // load the event details page and pass all of the info about the event to it
-                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed")]});
+                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed"), $(this).data("people"), $(this).data("location")]});
                     });
                 }
             })
@@ -1880,7 +1880,7 @@
             $(page).find("#titleInput").val(data.data[2]);
             $(page).find("#descriptionInput").val(data.data[4]);
             $(page).find("#dateInput").val(data.data[8]);
-            $(page).find("#locationInput").val(data.data[5]);
+            $(page).find("#locationInput").val(data.data[11]);
             $(page).find("#hostNameInput").val(data.data[3]);
 
             // check if the event is ticketed
@@ -1930,8 +1930,14 @@
         // change the title of the page to be the title of the event
         $(page).find("#analyticsTitle").html(data.data[2]);
 
+        // prepare an app section that tells the user how many people are going
+        var appSectionToInsert = '<div class="app-section">The number of people going to your event are: '+data.data[10]+'</div>'
+
         // prepare a button that will insert into the page to edit the event
         var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>'
+
+        // insert the app section
+        $(page).find(".app-content").append(appSectionToInsert);
 
         // insert the button
         $(page).find(".app-content").append(buttonToInsert);
