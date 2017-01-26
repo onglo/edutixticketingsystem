@@ -49,7 +49,6 @@ if (mysqli_query($link, $userQuery)) {
     $_SESSION["flagged"] = $newFlagList;
 }
 else {
-    echo $userQuery;
     die();
 }
 

@@ -95,6 +95,14 @@
             background-color: blue;
             color: white !important;
         }
+        .red {
+            background-color: red;
+            color: white !important;
+        }
+        .green {
+            background-color: green;
+            color: white !important;
+        }
         </style>
 
         <!-- recaptcha-->
@@ -128,7 +136,7 @@
                 <div class="left app-button" id="viewUserEventsButton" data-target="viewUserEvents">My Saved Events</div>
 
                 <!-- a button to manage the events the user is hosting-->
-                <div class="right app-button" id="manageUserEventsButton" data-target="manageUserEvents">My Hosted Events</div>
+                <div class="right app-button" id="manageUserEventsButton">My Hosted Events</div>
 
             </div>
 
@@ -445,7 +453,7 @@
             <div class="app-content" id="editUserEventsMainContent">
 
                 <!-- a banner telling the user what to do -->
-                <p class="app-section blue">Tap on any of the inputs and press update to change the event info!</p>
+                <p class="app-section blue" id="infoBanner">Tap on any of the inputs and press update to change the event info!</p>
 
                 <!-- an app section for the title -->
                 <div class="app-section">
@@ -493,9 +501,8 @@
                 </div>
 
                 <!-- a button that the user can press to send the info -->
-                <div class="app-section">
-                    <div class="app-button green" id="updateButton">Update Event Info</div>
-                </div>
+                <div class="app-button green app-section" id="updateButton">Update Event Info</div>
+
             </div>
 
         </div>
@@ -805,6 +812,12 @@
 
             })
 
+        })
+
+        // function that is executed when the manageusereventsbutton is pressed
+        $(page).find("#manageUserEventsButton").clickable().on("click", function() {
+            // load the manage user events page
+            App.load("manageUserEvents", {data: ["noBanner"]})
         })
 
     });
@@ -1709,7 +1722,7 @@
     });
 
     // the page controller to manage the users events
-    App.controller("manageUserEvents", function(page) {
+    App.controller("manageUserEvents", function(page, data) {
 
         // an ajax request to check if a user is currently logged in
         $.ajax({
@@ -1752,6 +1765,12 @@
                     // remove the loading banner
                     $(page).find("#managerUserEventsMainBody").html("")
 
+                    // check if an event has just been successfully modified and so if we need to tell the user this
+                    if (data.data[0] == "successBanner") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section green'>Event successfully updated!</p>")
+                    }
+
                     // split the data into the active and archived events
                     var userData = html.split("`@marker@`");
 
@@ -1777,7 +1796,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+' data-people='+activeEvents[event][8]+' data-location='+activeEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-status="etonEvents" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+' data-people='+activeEvents[event][8]+' data-location='+activeEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1813,7 +1832,7 @@
                             timeToUse = timeToUse.toTimeString().slice(0,5);
 
                             // prepare the div that we will insert
-                            var divToInsert = $('<div class="app-section eventBlock" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+' data-people='+archivedEvents[event][8]+' data-location='+archivedEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+                            var divToInsert = $('<div class="app-section eventBlock" data-status="etonEventsArchive" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+' data-people='+archivedEvents[event][8]+' data-location='+archivedEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
 
                             // insert a div into the page for this event
                             $(page).find("#managerUserEventsMainBody").append(divToInsert);
@@ -1830,7 +1849,7 @@
                     $(page).find(".eventBlock").clickable().on('click', function() {
 
                         // load the event details page and pass all of the info about the event to it
-                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed"), $(this).data("people"), $(this).data("location")]});
+                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed"), $(this).data("people"), $(this).data("location"), $(this).data("status")]});
                     });
                 }
             })
@@ -1881,7 +1900,7 @@
             $(page).find("#descriptionInput").val(data.data[4]);
             $(page).find("#dateInput").val(data.data[8]);
             $(page).find("#locationInput").val(data.data[11]);
-            $(page).find("#hostNameInput").val(data.data[3]);
+            $(page).find("#hostNameInput").val(data.data[3].replace("By ",""));
 
             // check if the event is ticketed
             if (data.data[9] == "false") {
@@ -1897,6 +1916,55 @@
             // show the page when we are ready
             $(page).find(".app-content").show();
         })
+
+        // function that is executed when the edit event button is pressed
+        $(page).find("#updateButton").clickable().on("click", function() {
+
+            // store a reference to the button
+            var button = $(this);
+
+            // get all the variables that will use
+            var eventID = data.data[0];
+            var db = data.data[12];
+            var isTicketed = $(page).find("#isTicketed").val();
+            var eventHost = $(page).find("#hostNameInput").val();
+            var eventLocation = $(page).find("#locationInput").val();
+            var eventDate = $(page).find("#dateInput").val();
+            var eventDesc = $(page).find("#descriptionInput").val();
+            var eventTitle = $(page).find("#titleInput").val();
+
+            // prepare an ajax query that will attempt to update the event
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/updateEvent.php",
+                data: "eventID="+eventID+"&db="+db+"&isTicketed="+isTicketed+"&eventHost="+eventHost+"&eventLocation="+eventLocation+"&eventDate="+eventDate+"&eventDesc="+eventDesc+"&eventTitle="+eventTitle,
+
+                // function that will execute before the data is sent
+                beforeSend: function () {
+                    // change the button to loading
+                    button.html("Loading...");
+                },
+                success: function(html) {
+
+                    // check if the attempt was successful
+                    if (html == "success") {
+                        App.load("manageUserEvents", {data: ["successBanner"]})
+                    }
+                    else {
+
+                        // change the banner at the top of the page to tell the user that there was an error
+                        $(page).find("#infoBanner").removeClass("blue");
+                        $(page).find("#infoBanner").addClass("red");
+                        $(page).find("#infoBanner").html("Oops! - There was an error, please try again later")
+
+                        // change the button back
+                        button.html("Update Event Info")
+                        console.log(html);
+                    }
+                }
+            });
+        });
     });
 
     // an app controller for the analytics page
@@ -1924,7 +1992,7 @@
         // code that is executed when the back button is pressed
         $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
             // go to the manage user events page
-            App.load("manageUserEvents");
+            App.load("manageUserEvents", {data: ["noBanner"]});
         })
 
         // change the title of the page to be the title of the event
