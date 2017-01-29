@@ -13,7 +13,7 @@ $link = mysqli_connect($dbServer, $dbUsername, $dbPassword, $dbUsername);
 // check if the connection was succesful
 if(mysqli_connect_error()) {
 
-    die("error");
+    die();
 
 };
 

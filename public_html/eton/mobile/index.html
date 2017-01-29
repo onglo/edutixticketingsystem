@@ -1806,6 +1806,14 @@
                         // add in the banner
                         $(page).find("#managerUserEventsMainBody").html("<p class='app-section green'>Event successfully updated!</p>")
                     }
+                    else if (data.data[0] == "successBannerDelete") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section green'>Event successfully deleted!</p>")
+                    }
+                    else if (data.data[0] == "failureBannerDelete") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section red'>There was an error deleting your event, please try again later</p>")
+                    }
 
                     // split the data into the active and archived events
                     var userData = html.split("`@marker@`");
@@ -2094,7 +2102,10 @@
         var appSectionToInsert = '<div class="app-section">The number of people going to your event are: '+data.data[10]+'</div>'
 
         // prepare a button that will insert into the page to edit the event
-        var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>'
+        var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>';
+
+        // prepare a button that can be used to delete the event
+        var deleteButton = '<div class="app-button app-section" style="background-color:red;color: white !important;" id="deleteEventButton">Delete Event</div>';
 
         // insert the app section
         $(page).find(".app-content").append(appSectionToInsert);
@@ -2102,11 +2113,53 @@
         // insert the button
         $(page).find(".app-content").append(buttonToInsert);
 
+        // insert the delete button
+        $(page).find(".app-content").append(deleteButton);
+
         // functiont that is executed when the button is pressed
         $(page).find("#editEventButton").clickable().on("click", function() {
             // load the edit event page
             App.load("editUserEvents", {data: data.data});
         })
+
+        // function that is executed when the delte button is pressed
+        $(page).find("#deleteEventButton").clickable().on("click", function() {
+
+            // popup a banner
+            App.dialog({
+                title : 'Confirm Deletion',
+                text: 'Please confirm that you want to delete this event',
+                okButton : 'Confirm',
+                cancelButton : 'Cancel',
+            }, function(choice) {
+                if (choice == "ok") {
+
+                    // prepare the vars we need
+                    var eventID = data.data[0];
+                    var db = data.data[12];
+
+                    // make an ajax call to the script that deletes events
+                    // prepare an ajax query that will attempt to update the event
+                    $.ajax({
+
+                        type: "POST",
+                        url: "scripts/deleteEvent.php",
+                        data: "eventID="+eventID+"&db="+db,
+                        success: function(html) {
+                            console.log(html)
+                            // check if the attempt was successful
+                            if (html == "success") {
+                                App.load("manageUserEvents", {data: ["successBannerDelete"]});
+                            }
+                            else {
+                                App.load("manageUserEvents", {data: ["failureBannerDelete"]});
+                            }
+                        }
+                    });
+                }
+            })
+
+        });
 
     });
 
