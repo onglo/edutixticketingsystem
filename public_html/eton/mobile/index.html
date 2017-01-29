@@ -125,18 +125,17 @@
                 <div class="right app-button" id="logoutButton">Log Out</div>
 
                 <!-- a button to create a new event -->
-                <div class="left app-button" data-target="createEvent">+</div>
+                <div class="left app-button" id="createNewEventButton" style="display:none;">+</div>
 
             </div>
 
             <!-- a bottom bar for the event-->
             <div class="app-topbar black" id="homepageBottomBar">
-
                 <!-- a button to view my events-->
                 <div class="left app-button" id="viewUserEventsButton" data-target="viewUserEvents">My Saved Events</div>
 
                 <!-- a button to manage the events the user is hosting-->
-                <div class="right app-button" id="manageUserEventsButton">My Hosted Events</div>
+                <div class="right app-button" id="manageUserEventsButton" style="display:none;">My Hosted Events</div>
 
             </div>
 
@@ -251,7 +250,7 @@
                 </div>
 
                 <!-- an app section for the is ticketed question -->
-                <div class="app-section">
+                <div class="app-section" style="display:none;">
 
                     <!-- a label asking the user the question -->
                     <p class="app-input" style="color:#A9A9A9;">Is the event ticketed? (tap)</p>
@@ -264,12 +263,8 @@
 
                 </div>
 
-                <!-- an app section for the submit button -->
-                <div class="app-section">
-
-                    <!-- a create event button -->
-                    <div class="app-button green" id="createEventButton">Create Event!</div>
-                </div>
+                <!-- a create event button -->
+                <div class="app-button green app-section" id="createEventButton">Create Event!</div>
 
             </div>
         </div>
@@ -491,7 +486,7 @@
                 </div>
 
                 <!-- an app section for the is tickted option -->
-                <div class="app-section">
+                <div class="app-section" style="display:none;">
                     <!-- a select for the option -->
                     <label for="titleInput" class="greyText">Ticketed:</label>
                     <select name="isTicketed" id="isTicketed" class="app-input">
@@ -813,12 +808,37 @@
 
             })
 
-        })
+            // check if the user can create events by making an ajax call to the script
+            // prepare an ajax query that will attempt to update this in the database
+            $.ajax({
 
-        // function that is executed when the manageusereventsbutton is pressed
-        $(page).find("#manageUserEventsButton").clickable().on("click", function() {
-            // load the manage user events page
-            App.load("manageUserEvents", {data: ["noBanner"]})
+                type: "POST",
+                url: "scripts/checkUserPermission.php",
+                success: function(html) {
+                    if (html == "true") {
+
+                        // function that is executed when the manageusereventsbutton is pressed
+                        $(page).find("#manageUserEventsButton").clickable().on("click", function() {
+                            // load the manage user events page
+                            App.load("manageUserEvents", {data: ["noBanner"]})
+                        })
+
+                        // function that is executed when the createNewEventButton is pressed
+                        $(page).find("#createNewEventButton").clickable().on("click", function() {
+
+                            // load the create event
+                            App.load("createEvent");
+                        })
+
+                        // show the event buttons
+                        $(page).find("#createNewEventButton").show();
+                        $(page).find("#manageUserEventsButton").show();
+
+                    }
+
+                }
+            });
+
         })
 
     });
@@ -878,7 +898,7 @@
                             else {
 
                                 // else spit an error message
-                                $(page).find("#errorFieldLogin").html("Oops! - "+html);
+                                $(page).find("#errorFieldLogin").html("Oops! - There was an error, please try again later.");
 
                                 // show the field
                                 $(page).find("#errorFieldLogin").show();

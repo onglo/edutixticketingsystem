@@ -18,10 +18,10 @@ if(mysqli_connect_error()) {
 };
 
 // a query to get the events that the user has hosted that are active
-$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEvents` WHERE `createdBy` = ".mysqli_real_escape_string($link,$_SESSION["idNumber"]);
+$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEvents` WHERE `createdBy` = ".mysqli_real_escape_string($link,$_SESSION["idNumber"])." ORDER BY `eventDate`";
 
 // a query to get the archived events that the user has hosted
-$archivedQuery = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEventsArchive` WHERE `createdBy` = ".mysqli_real_escape_string($link, $_SESSION["idNumber"]);
+$archivedQuery = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt`,`numberOfPeopleGoing` FROM `etonEventsArchive` WHERE `createdBy` = ".mysqli_real_escape_string($link, $_SESSION["idNumber"])." ORDER BY `eventDate`";
 
 // attempt to exeucte the first query
 if ($result = mysqli_query($link, $query)) {

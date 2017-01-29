@@ -35,7 +35,7 @@ $eventLocation = mysqli_real_escape_string($link, encryptEventData($salt, $_POST
 $eventHost = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["eventHost"]));
 $isTicketed = mysqli_real_escape_string($link, encryptEventData($salt, $_POST["isTicketed"]));
 
-$userQuery = "UPDATE `".mysqli_real_escape_string($link, $_POST["db"])."` SET `eventName` = '".$eventName."', `eventDesc` = '".$eventDescription."', `eventLocation` = '".$eventLocation."', `eventDate` = '".$eventDate."', `eventHost` = '".$eventHost."', `isTicketed` = '".$isTicketed.", `emailSent` = false' WHERE `id` = '".mysqli_real_escape_string($link, $_POST["eventID"])."' LIMIT 1";
+$userQuery = "UPDATE `".mysqli_real_escape_string($link, $_POST["db"])."` SET `eventName` = '".$eventName."', `eventDesc` = '".$eventDescription."', `eventLocation` = '".$eventLocation."', `eventDate` = '".$eventDate."', `eventHost` = '".$eventHost."', `isTicketed` = '".$isTicketed."', `emailSent` = 'false' WHERE `id` = '".mysqli_real_escape_string($link, $_POST["eventID"])."' LIMIT 1";
 
 // attempt the query
 if (mysqli_query($link, $userQuery)) {

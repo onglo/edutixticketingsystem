@@ -16,7 +16,7 @@ $formattedEmail = encryptEmail($_POST["username"]);
 $formattedEmail = mysqli_real_escape_string($link, $formattedEmail);
 
 // check if this account exists
-$query = "SELECT `salt`,`emailConfirmation`,`password`,`privateKey`,`publicKey`,`id`,`eventList`,`flaggedList` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
+$query = "SELECT `salt`,`emailConfirmation`,`password`,`privateKey`,`publicKey`,`id`,`eventList`,`flaggedList`,`editEventPermission` FROM `etonUsers` WHERE `email` = '".$formattedEmail."'";
 
 // get the data
 if ($result = mysqli_query($link, $query)) {
@@ -69,6 +69,16 @@ if ($result = mysqli_query($link, $query)) {
 
             // store the user's flagged events
             $_SESSION["flagged"] = $data["flaggedList"];
+
+            // check if the user can edit events
+            if ($data["editEventPermission"] == 1) {
+                // store that the user can create events
+                $_SESSION["permission"] = md5($_SESSION["idNumber"].$_SESSION["userID"]);
+            }
+            else {
+                // store that the user can't create events
+                $_SESSION["permission"] = md5($_SESSION["userID"]);
+            }
 
             echo "success";
             exit();
