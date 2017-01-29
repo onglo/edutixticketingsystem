@@ -36,7 +36,7 @@ $createdBy = mysqli_real_escape_string($link, $_SESSION["idNumber"]);
 $salt = mysqli_real_escape_string($link, $salt);
 
 // prepare a query that will insert it into the database
-$query = "INSERT INTO `etonEvents` (`eventName`,`eventDesc`,`eventDate`,`eventLocation`,`eventHost`,`isTicketed`,`createdBy`,`salt`) VALUES ('$eventName', '$eventDescription', '$eventDate', '$eventLocation', '$eventHost', '$isTicketed', '$createdBy', '$salt')";
+$query = "INSERT INTO `etonEvents` (`eventName`,`eventDesc`,`eventDate`,`eventLocation`,`eventHost`,`isTicketed`,`createdBy`,`salt`, `emailSent`) VALUES ('$eventName', '$eventDescription', '$eventDate', '$eventLocation', '$eventHost', '$isTicketed', '$createdBy', '$salt', 'false')";
 
 // attempt to execute the query
 if (mysqli_query($link, $query)) {

@@ -531,25 +531,26 @@
 
     App.controller('mainPage', function (page) {
 
-        // an ajax request to check if a user is currently logged in
-        $.ajax({
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
-
         // function that is executed when the logout button is pressed
         $(page).find("#logoutButton").clickable().on('click', function() {
             // run an ajax script that will log the user out
@@ -918,23 +919,25 @@
         // initially hide the errors box
         $(page).find("#errorFieldCreateEvent").hide();
 
-        // an ajax request to check if a user is currently logged in
-        $.ajax({
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // function that will execute when the create event button is pressed
@@ -1225,23 +1228,25 @@
     // the page controller for the eventInfo page
     App.controller("eventInfo", function (page, data) {
 
-        // an ajax request to check if a user is currently logged in
-        $.ajax({
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // function that is called when the back button is pressed
@@ -1413,23 +1418,25 @@
     // the page controller for the user's event list
     App.controller("viewUserEvents", function(page) {
 
-        // an ajax request to check if a user is currently logged in
-        $.ajax({
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // script that is executed when the back button is pressed
@@ -1724,23 +1731,25 @@
     // the page controller to manage the users events
     App.controller("manageUserEvents", function(page, data) {
 
-        // an ajax request to check if a user is currently logged in
-        $.ajax({
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // script that is executed when the back button is pressed
@@ -1861,22 +1870,24 @@
     App.controller("editUserEvents", function(page, data) {
 
         // authenticate the user
-        $.ajax({
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // hide the main page of the body until we are done loading
@@ -1960,7 +1971,6 @@
 
                         // change the button back
                         button.html("Update Event Info")
-                        console.log(html);
                     }
                 }
             });
@@ -1971,22 +1981,24 @@
     App.controller("eventAnalyticsPage", function(page, data) {
 
         // authenticate the user
-        $.ajax({
+        $(page).on("appReady", function() {
+            $.ajax({
 
-            type: "POST",
-            url: "scripts/authenticate.php",
-            data: "",
-            success: function(html) {
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
 
-                // check if the user isn't authenticated
-                if (html != "true") {
+                    // check if the user isn't authenticated
+                    if (html != "true") {
 
-                    // redirect the user
-                    App.load("home");
+                        // redirect the user
+                        App.load("home");
 
+                    }
                 }
-            }
 
+            });
         });
 
         // code that is executed when the back button is pressed
