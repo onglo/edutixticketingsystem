@@ -495,6 +495,13 @@
                     </select>
                 </div>
 
+                <!-- an app section where the user can decide if they want to notify everyone going to the event that the event has now been cancelled -->
+                <div class="app-section">
+                    <!-- a checkbox to decide -->
+                    <label for="notifyUsers"><input type="checkbox" id="notifyUsers" checked="checked"> Notify users of the changes you have made to this event?</label><br>
+
+                </div>
+
                 <!-- a button that the user can press to send the info -->
                 <div class="app-button green app-section" id="updateButton">Update Event Info</div>
 
@@ -1964,12 +1971,65 @@
             var eventDesc = $(page).find("#descriptionInput").val();
             var eventTitle = $(page).find("#titleInput").val();
 
+            // check if the user wants to email the user about changes
+            if ($(page).find("#notifyUsers").is(":checked")){
+
+                // initialise a string that keeps track of the values which have changed
+                var changed = "";
+
+                if (eventHost != data.data[3].replace("By ","")) {
+
+                    changed += "$$$the event is now hosted by " + eventHost;
+
+                }
+                if (eventLocation != data.data[11]) {
+
+                    changed += "$$$the location of the event is now " + eventLocation;
+
+                }
+                if (eventDate != data.data[8]) {
+
+                    // formate the date we will use
+                    formatted = eventDate.replace("T", " ");
+                    formatted = new Date(formatted);
+                    var dateToUse = formatted.toDateString().slice(0,-5);
+
+                    // format the time we will use
+                    var timeToUse = new Date(eventDate);
+                    timeToUse = timeToUse.toTimeString().slice(0,5);
+
+                    changed += "$$$the event is now on " + dateToUse + " at " + timeToUse;
+
+                }
+                if (eventDesc != data.data[4]) {
+
+                    changed += "$$$the description of the event is now "+ eventDesc;
+
+                }
+                if (eventTitle != data.data[2]) {
+
+                    changed += "$$$the title of the event is now "+ eventTitle;
+
+                }
+
+                // if there weren't any chnages set email to false
+                if (changed == "") {
+                    var email = "false";
+                }
+                else {
+                    var email = "true";
+                }
+            }
+            else {
+                var email = "false";
+            }
+
             // prepare an ajax query that will attempt to update the event
             $.ajax({
 
                 type: "POST",
                 url: "scripts/updateEvent.php",
-                data: "eventID="+eventID+"&db="+db+"&isTicketed="+isTicketed+"&eventHost="+eventHost+"&eventLocation="+eventLocation+"&eventDate="+eventDate+"&eventDesc="+eventDesc+"&eventTitle="+eventTitle,
+                data: "eventID="+eventID+"&db="+db+"&isTicketed="+isTicketed+"&eventHost="+eventHost+"&eventLocation="+eventLocation+"&eventDate="+eventDate+"&eventDesc="+eventDesc+"&eventTitle="+eventTitle+"&email="+email+"&changed="+changed,
 
                 // function that will execute before the data is sent
                 beforeSend: function () {
