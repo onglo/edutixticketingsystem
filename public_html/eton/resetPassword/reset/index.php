@@ -14,7 +14,7 @@
         <!-- php script that will check if the url is valid -->
         <?php
 
-        include("/home/sites/edutix.com/config/config.php");
+        include("/home/sites/edutix.co.uk/config/config.php");
 
         // first check if the values are present
         if (empty($_GET["email"]) or empty($_GET["token"])) {

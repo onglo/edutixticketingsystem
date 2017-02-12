@@ -1,7 +1,7 @@
 <?php
 
 // ensure user is logged in
-include("/home/sites/edutix.com/config/config.php");
+include("/home/sites/edutix.co.uk/config/config.php");
 authenticateUser();
 ?>
 

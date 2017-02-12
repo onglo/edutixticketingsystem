@@ -1,6 +1,6 @@
 <?php
 
-require_once "/home/sites/edutix.com/config/config.php";
+require_once "/home/sites/edutix.co.uk/config/config.php";
 
 // connect to our database
 $link = mysqli_connect($dbServer, $dbUsername, $dbPassword, $dbUsername);
@@ -49,7 +49,7 @@ if ($result = mysqli_query($link, $query)) {
                     $message = "Hello,\r\n\r\nJust a quick email to let you know that an event your going to, ".$eventName.", is starting in less than an hour. The event location is: ".$eventLocation.".\r\n\r\nMany Thanks,\r\nThe Edutix Team";
 
                     // mail the message
-                    mail(decryptEmail($userEmail["email"]), $eventName." reminder", $message, "'From:hello@Edutix.com' . '\r\n'");
+                    mail(decryptEmail($userEmail["email"]), $eventName." reminder", $message, "'From:hello@Edutix.co.uk' . '\r\n'");
 
                     echo "emailSent";
                 }

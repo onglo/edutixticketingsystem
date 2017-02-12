@@ -74,7 +74,7 @@
 
       <!-- php -->
       <?php
-      include("/home/sites/edutix.com/config/config.php");
+      include("/home/sites/edutix.co.uk/config/config.php");
 
       // check if the user has submitted data
       if (!empty($_POST["usernameInput"]) or !empty($_POST["passwordInput"])) {

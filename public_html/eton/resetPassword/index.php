@@ -140,10 +140,10 @@
                         if ($result = mysqli_query($link, $query)) {
 
                             // a message that will be sent to the user
-                            $message = "Hello,\r\n\r\nA request has been made to reset the password to your account. To do so, please visit the link below:\r\nhttp://79.170.40.38/edutix.com/eton/resetPassword/reset?email=".rawurlencode($data["email"])."&token=".rawurlencode($userToken[1])."\r\n\r\nIf you didn't request a password change, please ignore this email.\r\n\r\nMany Thanks,\r\nThe Edutix Team";
+                            $message = "Hello,\r\n\r\nA request has been made to reset the password to your account. To do so, please visit the link below:\r\nhttp://edutix.co.uk/eton/resetPassword/reset?email=".rawurlencode($data["email"])."&token=".rawurlencode($userToken[1])."\r\n\r\nIf you didn't request a password change, please ignore this email.\r\n\r\nMany Thanks,\r\nThe Edutix Team";
 
                             // send the email
-                            mail(decryptEmail($data["email"]), 'Reset Edutix Password', $message, "'From:hello@Edutix.com' . '\r\n'");
+                            mail(decryptEmail($data["email"]), 'Reset Edutix Password', $message, "'From:hello@edutix.co.uk' . '\r\n'");
                         }
                         else {
                             die("Error connecting to database");

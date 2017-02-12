@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edutix</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+        <link rel="stylesheet" href="app.min.css">
+        <style>
+
+        /* styytling for the event block items */
+        .eventDate {
+
+            color: grey;
+
+        }
+        .eventTitle {
+
+        }
+        .eventDesc {
+
+        }
+        .eventLocation {
+
+        }
+        .eventHost {
+
+            color: grey;
+
+        }
+        .eventSegment {
+
+        }
+        #locationMarker {
+            width: 20px;
+            height: 20px;
+        }
+        .dateBanner {
+            text-align: center;
+            background-color: black;
+            color: white !important;
+        }
+        .refresh {
+            background-color: orange;
+            color: white;
+        }
+        #errorFieldCreateEvent {
+            background-color: red;
+            color: white;
+        }
+        #errorFieldLogin {
+            background-color: red;
+            color: white;
+        }
+        #errorFieldCreateAccount {
+            background-color: red;
+            color: white;
+        }
+        #errorFieldResetPassword {
+            background-color: red;
+            color: white;
+        }
+        #successBanner {
+            background-color: green;
+            color: white;
+        }
+        .orange {
+            background-color: orange;
+        }
+        #forgotPasswordLink {
+            float: right;
+        }
+        #signUpLink {
+            float: left;
+        }
+        #passwordPrompt {
+            font-size: 12px;
+        }
+        .greyText {
+            color: grey;
+        }
+        .goingToEvent {
+            background-color: #42e5f4 !important;
+            color: white !important;
+            text-align: center;
+        }
+        #homepageBottomBar {
+            position: absolute !important;
+            bottom: 0 !important;
+        }
+        #mainPageBody {
+        }
+        #blankSpace {
+            width: 100%;
+        }
+        .blue {
+            background-color: #96C8A2 !important;
+            color: white !important;
+        }
+        .red {
+            background-color: red;
+            color: white !important;
+        }
+        .green {
+            background-color: green;
+            color: white !important;
+        }
+        .center {
+             display:block;
+             margin-left:auto;
+             margin-right:auto;
+        }
+
+        </style>
+
+
+    </head>
+
+    <body>
+
+        <!-- jquery script -->
+        <script src="zepto.js"></script>
+        <script src="app.min.js"></script>
+
+        <div class="app-page" data-page="mainPage">
+
+            <div class="app-topbar blue">
+                <div class="app-title">What's On?</div>
+
+                <!-- a button to logout -->
+                <div class="right app-button" id="logoutButton">Log Out</div>
+
+                <!-- a button to create a new event -->
+                <div class="left app-button" id="createNewEventButton" style="display:none;">+</div>
+
+            </div>
+
+            <!-- a bottom bar for the event-->
+            <div class="app-topbar black" id="homepageBottomBar">
+                <!-- a button to view my events-->
+                <div class="left app-button" id="viewUserEventsButton" data-target="viewUserEvents">My Saved Events</div>
+
+                <!-- a button to manage the events the user is hosting-->
+                <div class="right app-button" id="manageUserEventsButton" style="display:none;">My Hosted Events</div>
+
+            </div>
+
+            <!-- the main page where the events will go -->
+            <div class="app-content" id="mainPageBody">
+
+            </div>
+        </div>
+
+        <!-- a page where the user can login -->
+        <div class="app-page" data-page="home">
+
+            <!-- the top bar of the app -->
+            <div class="app-topbar blue">
+
+                <div class="app-title">Login</div>
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldLogin"></p>
+
+                <!-- an app section for the login form -->
+                <div class="app-section">
+
+                    <!-- an input for the user's email -->
+                    <input id="emailInput" class="app-input" name="email" type="email" placeholder="Enter Email" />
+
+                    <!-- an input for the password -->
+                    <input id="passwordInput" class="app-input" name="password" type="password" placeholder="Enter Password" />
+
+                    <!-- a login button -->
+                    <div class="app-button green" id="submitButton">Access Edutix</div>
+
+                </div>
+
+                <!-- a p that will act as a button to creat an account -->
+                <p class="app-section" id="createAccount">Don't have an account?</p>
+
+                <!-- a p that will act as a button to reset the user's password -->
+                <p class="app-section" id="resetPassword">Forgot Password?</p>
+
+            </div>
+        </div>
+
+        <!-- a page to create a new event -->
+        <div class="app-page" data-page="createEvent">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Host An Event</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back>Cancel</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldCreateEvent"></p>
+
+                <!-- an app section for the inputs that we need -->
+                <div class="app-section">
+                    <!-- an input for the name of the event -->
+                    <input type="text" class="app-input" id="titleInput" placeholder="What is the name of your event?" />
+                </div>
+
+                <!-- an app section for the text area -->
+                <div class="app-section">
+                    <!-- an input for the description of the event (textarea) -->
+                    <textarea class="app-input" id="descInput" placeholder="Write a short description of your event"></textarea>
+                </div>
+
+                <!-- an app section for date and time -->
+                <div class="app-section">
+
+                    <p class="app-input" style="color:#A9A9A9;">When is your event?</p>
+                    <!-- an input for the name of the event -->
+                    <input type="datetime-local" class="app-input" id="dateInput" />
+                    <!-- a script to autofill the date input -->
+                    <script type="text/javascript">
+
+                    // get the current date
+                    var currentDate = new Date();
+                    currentDate = currentDate.toISOString().split("T")[0];
+                    // set the input's deafult date to the current date and the minium date to the current time
+                    $("#dateInput").attr("value", currentDate + "T13:00");
+
+                    // set the min value to be today
+                    var currentDate = new Date();
+                    currentDate = currentDate.toISOString()
+                    $("#dateInput").attr("min", currentDate.substring(0,16));
+                    </script>
+
+                </div>
+
+                <!-- an app section for the location -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" type="text" id="locationInput" placeholder="Where is your event located?" />
+                </div>
+
+                <!-- an app section for the event host name -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" type="text" id="hostNameInput" placeholder="What is the name of the organiser of the event?" />
+                </div>
+
+                <!-- an app section for the is ticketed question -->
+                <div class="app-section" style="display:none;">
+
+                    <!-- a label asking the user the question -->
+                    <p class="app-input" style="color:#A9A9A9;">Is the event ticketed? (tap)</p>
+
+                    <!-- a menu where the user can select their choice -->
+                    <select name="isTicketed" id="isTicketed" class="app-input">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+
+                </div>
+
+                <!-- a create event button -->
+                <div class="app-button green app-section" id="createEventButton">Create Event!</div>
+
+            </div>
+        </div>
+
+        <!-- a page to create an account -->
+        <div class="app-page" data-page="createAccount">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Create An Account</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back>Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldCreateAccount"></p>
+
+                <!-- an app section that will be populated with text if the user is signed up -->
+                <p class="app-section" id="successBanner"></p>
+
+                <!-- a container for first name and last name inputs-->
+                <div class="app-section">
+
+                    <!-- the input for the first name -->
+                    <input class="app-input" type="text" id="firstnameInput" placeholder="What is your first name?" />
+                    <!-- input for the last name -->
+                    <input class="app-input" type="text" id="surnameInput" placeholder="What is your surname?" />
+                </div>
+
+                <!-- an app section for the eton email -->
+                <div class="app-section">
+
+                    <!-- an input for this email -->
+                    <input class="app-input" type="email" id="emailInput" placeholder="What is your Eton email address?" />
+
+                </div>
+
+                <!-- an app section for the password input -->
+                <div class="app-section">
+
+                    <!-- an input for the password -->
+                    <input type="password" class="app-input" placeholder="Enter your desired password" id="password"/>
+
+                    <p class="app-input" id="passwordPrompt">(Your password needs to be at least 6 characters long)</p>
+
+                    <!-- an input for the confirm password -->
+                    <input type="password" class="app-input" id="confirmPassword" placeholder="Please confirm your password" />
+
+                    <!-- a sign up button -->
+                    <div class="app-button green" id="signUpButton">Sign Up!</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- a page to reset your password -->
+        <div class="app-page" data-page="resetPassword">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+                <div class="app-title">Reset Your Password</div>
+
+                <!-- a button to cancel / go back -->
+                <div class="app-button" data-back>Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section that will be populated with text if there is an issue with the input -->
+                <p class="app-section" id="errorFieldResetPassword"></p>
+
+                <!-- an app section that will be populated with text if the user is signed up -->
+                <p class="app-section" id="successBanner"></p>
+
+                <!-- a p telling the user what will happen -->
+                <p class="app-section">Enter your email below and we will send confirmation instructions to your email</p>
+
+                <!-- an app section for the email and submit button -->
+                <div class="app-section">
+
+                    <!-- the input -->
+                    <input class="app-input" id="resetEmailInput" type="email" placeholder="Enter email here" />
+
+                    <!-- a submit button -->
+                    <div class="app-button green" id="resetSubmit">Submit</div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- a page to find out more about an event -->
+        <div class="app-page" data-page="eventInfo">
+
+            <!-- the topbar of the app -->
+            <div class="app-topbar blue">
+
+                <!-- this topbar will be populated with the name of the event-->
+                <div class="app-title" id="eventTitleHolder">My Awesome Event</div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="moreInfoBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- an app section for the event -->
+                <div class="app-section" id="eventInfoBanner">
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- a page where the user can view their saved events -->
+        <div class="app-page" data-page="viewUserEvents">
+
+            <!-- the topbar of the app-->
+            <div class="app-topbar blue">
+
+                <!--a title for page -->
+                <div class="app-title">My Saved Events</div>
+
+                <!-- a back button -->
+                <div class="app-button" id="userEventsBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the app -->
+            <div class="app-content" id="viewUserEventsBody">
+            </div>
+
+        </div>
+
+        <!-- a page where the user can manage the events that they have hosted-->
+        <div class="app-page" data-page="manageUserEvents">
+
+            <!-- the top bar of the app -->
+            <div class="app-topbar blue">
+
+                <!-- a title for the page -->
+                <div class="app-title">Manage Your Events</div>
+
+                <!-- a back button -->
+                <div class="app-button" id="manageEventsBackButton">Back</div>
+            </div>
+
+            <!-- the main content of the app -->
+            <div class="app-content" id="managerUserEventsMainBody">
+
+            </div>
+
+        </div>
+
+        <!-- a page where the user can view info about their hosted events -->
+        <div class="app-page" data-page="editUserEvents">
+
+            <!-- the top bar -->
+            <div class="app-topbar blue">
+
+                <!-- this is the app title that will be populated by the title of the event when the user clicks on it -->
+                <div class="app-title" id="editUserEventsTopbar"></div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="editUserEventsGoBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content" id="editUserEventsMainContent">
+
+                <!-- a container for all of the elements -->
+                <div id="elementContainer">
+
+                    <!-- a banner telling the user what to do -->
+                    <p class="app-section blue" id="infoBanner">Tap on any of the inputs and press update to change the event info!</p>
+
+                    <!-- an app section for the title -->
+                    <div class="app-section">
+                        <!-- an input with the current event title -->
+                        <label for="titleInput" class="greyText">Title:</label>
+                        <input id="titleInput" class="app-input" type="text" value="Tech Club" />
+                    </div>
+
+                    <!-- an app section for the desc -->
+                    <div class="app-section">
+                        <!-- an input that has the current desc -->
+                        <label for="titleInput" class="greyText">Description:</label>
+                        <textarea class="app-input" id="descriptionInput">This is the event description</textarea>
+                    </div>
+
+                    <!-- an app section for the event date + time -->
+                    <div class="app-section">
+                        <!-- the input with the date and time -->
+                        <label for="titleInput" class="greyText">Event date and time:</label>
+                        <input type="datetime-local" class="app-input" id="dateInput" />
+                    </div>
+
+                    <!-- a div that has the location of the event -->
+                    <div class="app-section">
+                        <!-- the event input -->
+                        <label for="titleInput" class="greyText">Location:</label>
+                        <input class="app-input" type="text" id="locationInput" value="CIRL - Creative space" />
+                    </div>
+
+                    <!-- an app section for the host name -->
+                    <div class="app-section">
+                        <!-- an input that has the current host name -->
+                        <label for="titleInput" class="greyText">Host Name:</label>
+                        <input class="app-input" type="text" id="hostNameInput" value="Edouard Long" />
+                    </div>
+
+                    <!-- an app section for the is tickted option -->
+                    <div class="app-section" style="display:none;">
+                        <!-- a select for the option -->
+                        <label for="titleInput" class="greyText">Ticketed:</label>
+                        <select name="isTicketed" id="isTicketed" class="app-input">
+                            <option id="noOption" selected="">No</option>
+                            <option id="yesOption" selected="">Yes</option>
+                        </select>
+                    </div>
+
+                    <!-- an app section where the user can decide if they want to notify everyone going to the event that the event has now been cancelled -->
+                    <div class="app-section">
+                        <!-- a checkbox to decide -->
+                        <label for="notifyUsers"><input type="checkbox" id="notifyUsers" checked="checked"> Notify users of the changes you have made to this event?</label><br>
+
+                    </div>
+
+                    <!-- a button that the user can press to send the info -->
+                    <div class="app-button green app-section" id="updateButton">Update Event Info</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- a page where the user can view analytics about their app -->
+        <div class="app-page" data-page="eventAnalyticsPage">
+
+            <!-- the app topbar -->
+            <div class="app-topbar blue">
+
+                <!-- the titile for the page -->
+                <div class="app-title" id="analyticsTitle"></div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="editUserEventsGoBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+            </div>
+
+        </div>
+
+        <!-- a page for the send message -->
+        <div class="app-page" data-page="sendMessagePage">
+
+            <!-- the app topbar -->
+            <div class="app-topbar blue">
+
+                <!-- the titile for the page -->
+                <div class="app-title" id="sendMessageTitle">Send a Message</div>
+
+                <!-- a button to go back -->
+                <div class="app-button" id="sendMessageBackButton">Back</div>
+
+            </div>
+
+            <!-- the main content of the page -->
+            <div class="app-content">
+
+                <!-- a banner that will appear once the user has pressed the button -->
+                <div class="app-section" style="display:none;" id="sendMessageBanner"></div>
+
+                <!-- a textarea where the user can type in their message -->
+                <div class="app-section">
+
+                    <textarea class="app-input" placeholder="Enter your message here" id="messageToSendToUsersInput" style="height:200px;"></textarea>
+
+                </div>
+
+                <!-- a button where the user can send the message -->
+                <div class="app-section app-button green" id="sendMessageSubmitButton">Send Message</div>
+
+            </div>
+        </div>
+
+    <script>
+
+    App.controller('mainPage', function (page) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+        // function that is executed when the logout button is pressed
+        $(page).find("#logoutButton").clickable().on('click', function() {
+            // run an ajax script that will log the user out
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/logout.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user was logged out
+                    if (html == "success") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            })
+
+        });
+
+        $(page).on("appReady", function () {
+
+            // an ajax call to load up all of the events
+            $.ajax({
+                type: "POST",
+                url: "scripts/fetchEvents.php",
+                data: "startOffset=0",
+                beforeSend: function () {
+
+                    // add in a small loading banner
+                    $(page).find("#mainPageBody").html("<p class='app-section'>Loading events...</p>")
+                },
+                success: function(html) {
+
+                    // hide the loading banner
+                    $(page).find("#mainPageBody").html("");
+
+                    // if there are no events to show display this to the user
+                    if (html == "none") {
+                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, there aren't any events to show!</p>");
+                    }
+                    else if (html == "error" || html == "")  {
+                        // if there was an error tell the user this
+                        $(page).find("#mainPageBody").html("<p class='app-section'>Sorry, were having some trouble fetching the events. Please try again later.</p>");
+                    }
+                    else {
+                        // turn the output into a javascript array
+                        var events = JSON.parse(html);
+
+                        // initialise the datebanner to be yesterday
+                        var oldDate = new Date();
+                        oldDate.setDate(oldDate.getDate()-1);
+
+                        // loop through each value in this array
+                        for (var event = 0; event < events.length; event++) {
+
+                            var date = events[event][3].slice(0,10);
+                            date = new Date(date);
+
+                            // check if this date is greater than the current day we are on
+                            if (date > oldDate) {
+                                // generate a new banner for this day
+                                var dateToUse = date.toDateString().slice(0,-5);
+                                $(page).find("#mainPageBody").append("<p class='app-section dateBanner orange'>"+dateToUse+"</p>");
+
+                                // set this as the old date
+                                oldDate = date;
+                            }
+
+                            // formate the date we will use
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // format the time we will use
+                            var timeToUse = events[event][3].split(" ");
+                            timeToUse = timeToUse[1].slice(0,-3);
+
+                            // check if the user has flagged this event
+                            if (events[event][7] == "true") {
+
+                                // change the source to bookmarked
+                                var source = "bookmarked.png";
+                            }
+                            else {
+                                var source = "notBookmarked.png"
+                            }
+
+                            // check if the user is going to this event
+                            if (events[event][6] == "true") {
+
+                                // prepare the div that says I will attend
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" data-id="'+events[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            }
+                            else {
+
+                                // prepare the div we will insert
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+events[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+events[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+events[event][1]+'</h2><h4 class="eventHost eventSegment">By '+events[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+events[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+events[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id="'+events[event][0]+'">I will attend!</div></div>');
+                            }
+
+                            // insert a div into the page for this event
+                            $(page).find("#mainPageBody").append(divToInsert);
+
+                        }
+
+                        // at the end add a div of blank space
+                        $(page).find("#mainPageBody").append('<div id="blankSpace"></div>');
+
+                        // set the height of this to be the height of the bottom banner
+                        $(page).find("#blankSpace").css("height", $(page).find("#homepageBottomBar").css("height"));
+
+                        // function that executes when the bookmark is pressed
+                        $(page).find("#bookmarkImage").clickable().on("click", function() {
+
+                            // check if the event is already bookmarked
+                            if ($(this).attr("src") == "bookmarked.png") {
+
+                                // unflag the event via ajax
+
+                                // save the button so that we can use it later
+                                var bookmarkButton = $(this);
+
+                                // make an ajax call to the flag event script
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "scripts/removeFlag.php",
+                                    data: "id="+bookmarkButton.data("id"),
+                                    success: function(html) {
+
+                                        // check if the update was successful
+                                        if (html == "success") {
+
+                                            // unflag the event
+                                            bookmarkButton.attr("src", "notBookmarked.png");
+
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+
+                                // bookmark this event for the user
+
+                                // save the button so that we can use it later
+                                var bookmarkButton = $(this);
+
+                                // make an ajax call to the flag event script
+                                // prepare an ajax query that will attempt to update this in the database
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "scripts/flagEvent.php",
+                                    data: "id="+bookmarkButton.data("id"),
+                                    success: function(html) {
+
+                                        // check if the update was successful
+                                        if (html == "success") {
+
+                                            // mark the event as flageed
+                                            bookmarkButton.attr("src", "bookmarked.png");
+
+                                        }
+                                    }
+                                });
+                            }
+                        });
+
+                        // code that executes when the event blocks are clicked on
+                        $(page).find(".eventBlock").clickable().on('click', function() {
+
+                            // load the event details page and pass all of the info about the event to it
+                            App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id")]}, "slide-left");
+
+                        });
+
+                        // code that is executed when the I will attend button is pressed
+                        $(page).find("#attendEventButton").clickable().on("click", function() {
+
+                            // check if the user is already going to the event
+                            if ($(this).html() != "I will attend!") {
+
+                                // store a refernce to the button
+                                var buttonPressed = $(this);
+
+                                // attempt to update the databases via an ajax request
+                                // prepare an ajax query that will attempt to update this in the database
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "scripts/removeAttendEvent.php",
+                                    data: "id="+buttonPressed.data("id"),
+                                    // function that will execute before the data is sent
+                                    beforeSend: function () {
+                                        // change the button to loading
+                                        buttonPressed.html("Loading...");
+                                    },
+                                    success: function(html) {
+
+                                        // check if the update was successful
+                                        if (html == "success") {
+
+                                            // modify the attend event button
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").removeClass("goingToEvent");
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").addClass("green");
+                                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").html("I will attend!");
+
+                                        }
+                                        else {
+                                            // change the button back
+                                            buttonPressed.html("You're going to this event!");
+                                        }
+
+                                    }
+                                });
+
+                            }
+                            else {
+                                // store a reference to the button
+                                var button = $(this);
+
+                                // prepare an ajax query that will attempt to update this in the database
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "scripts/attendEvent.php",
+                                    data: "id="+button.data("id"),
+                                    // function that will execute before the data is sent
+                                    beforeSend: function () {
+                                        // change the button to loading
+                                        button.html("Loading...");
+                                    },
+                                    success: function(html) {
+
+                                        // check if the update was successful
+                                        if (html == "success") {
+
+                                            // modify the attend event button
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").removeClass("green");
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").addClass("goingToEvent");
+                                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").html("You're going to this event!");
+
+                                        }
+                                        else {
+
+                                            // change the button back
+                                            button.html("I will attend!");
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+
+                }
+
+            })
+
+            // check if the user can create events by making an ajax call to the script
+            // prepare an ajax query that will attempt to update this in the database
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/checkUserPermission.php",
+                success: function(html) {
+                    if (html == "true") {
+
+                        // function that is executed when the manageusereventsbutton is pressed
+                        $(page).find("#manageUserEventsButton").clickable().on("click", function() {
+                            // load the manage user events page
+                            App.load("manageUserEvents", {data: ["noBanner"]}, "slide-left")
+                        })
+
+                        // function that is executed when the createNewEventButton is pressed
+                        $(page).find("#createNewEventButton").clickable().on("click", function() {
+
+                            // load the create event
+                            App.load("createEvent", "slide-left");
+                        })
+
+                        // show the event buttons
+                        $(page).find("#createNewEventButton").show();
+                        $(page).find("#manageUserEventsButton").show();
+
+                    }
+
+                }
+            });
+
+        })
+
+    });
+
+    App.controller("home", function (page) {
+
+        // initially hide the errors box
+        $(page).find("#errorFieldLogin").hide();
+
+        // make the login button clickable (function that executes when the button is pressed)
+        $(page).find("#submitButton").clickable().on('click', function() {
+
+            // check if any of the fields are empty
+            if ($(page).find("#passwordInput").val() == "" || $(page).find("#emailInput").val() == "") {
+
+                // if they are add this to the error div
+                $(page).find("#errorFieldLogin").html("Oops! - One or more of the fields are empty");
+
+                // show the field
+                $(page).find("#errorFieldLogin").show();
+
+            }
+            else {
+
+                // check if the email is valid
+                var pattern = new RegExp(/^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i);
+                if (!pattern.test($(page).find("#emailInput").val())) {
+
+                    // if they are add this to the error div
+                    $(page).find("#errorFieldLogin").html("Oops! - Invalid Email");
+
+                    // show the field
+                    $(page).find("#errorFieldLogin").show();
+
+                }
+                else {
+                    // try to login the user with via ajax request
+                    $.ajax({
+
+                        type: "POST",
+                        url: "scripts/login.php",
+                        data: "username="+$(page).find("#emailInput").val()+"&password="+$(page).find("#passwordInput").val(),
+                        // function that will execute before the data is sent
+                        beforeSend: function () {
+                            // change the button to loading
+                            $(page).find("#submitButton").html("Loading...");
+                        },
+                        success: function(html) {
+
+                            // check if the login was a success
+                            if (html == "success") {
+
+                                // go to the homepage
+                                App.load('mainPage', "slide-left");
+
+                            }
+                            // check if the users email isn't verified
+                            else if (html == "Your email needs to be confirmed before you can login") {
+                                $(page).find("#errorFieldLogin").html("Oops! - You need to verify your email before you can login!");
+
+                                // show the field
+                                $(page).find("#errorFieldLogin").show();
+
+                                // change the button again
+                                $(page).find("#submitButton").html("Access Edutix");
+                            }
+                            else {
+
+                                // else spit an error message
+                                $(page).find("#errorFieldLogin").html("Oops! - There was an error, please try again later.");
+
+                                // show the field
+                                $(page).find("#errorFieldLogin").show();
+
+                                // change the button again
+                                $(page).find("#submitButton").html("Access Edutix");
+
+                            }
+                        }
+
+                    });
+
+                }
+                return false;
+            }
+        });
+
+        // function that executes when don't have an account is pressed
+        $(page).find("#createAccount").clickable().on("click", function() {
+
+            // redirect to the create account page
+            App.load("createAccount", "slide-left");
+
+        });
+
+        // function that executes when forgot pssword is pressed
+        $(page).find("#resetPassword").clickable().on("click", function() {
+
+            // redirect to the create account page
+            App.load("resetPassword", "slide-left");
+
+        });
+    });
+
+    // an app controller for the host an event page
+    App.controller("createEvent", function (page) {
+
+        // initially hide the errors box
+        $(page).find("#errorFieldCreateEvent").hide();
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // function that will execute when the create event button is pressed
+        $(page).find("#createEventButton").clickable().on('click', function() {
+
+            // store the dates
+            var today = new Date();
+            var dateInput = new Date($("#dateInput").val());
+
+            // first, check if any of the fields are empty
+            if ($(page).find("#titleInput").val() == "" || $(page).find("#descInput").val() == "" || $(page).find("#locationInput").val() == "" || $(page).find("#hostNameInput").val() == "") {
+
+                // if they are add this to the error div
+                $(page).find("#errorFieldCreateEvent").html("Oops! - One or more of the fields are empty");
+
+                // show the field
+                $(page).find("#errorFieldCreateEvent").show();
+            }
+            // check if the date is valid
+            else if (dateInput < today) {
+                // if they are add this to the error div
+                $(page).find("#errorFieldCreateEvent").html("Oops! - This date isn't valid");
+
+                // show the field
+                $(page).find("#errorFieldCreateEvent").show();
+            }
+            else {
+
+                // create the event via an ajax script
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/createEvent.php",
+                    data: "titleInput="+$(page).find("#titleInput").val()+"&descInput="+$(page).find("#descInput").val()+"&dateInput="+$(page).find("#dateInput").val()+"&hostName="+$(page).find("#hostNameInput").val()+"&locationInput="+$(page).find("#locationInput").val()+"&isTicketed="+$(page).find("#isTicketed").val(),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        $(page).find("#createEventButton").html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the event was created
+                        if (html == "success") {
+
+                            // redirect the user to the events page
+                            App.load("mainPage", "slide-right");
+
+                        }
+                        else {
+
+                            // add the error to the error field
+                            $(page).find("#errorFieldCreateEvent").html("Oops! - There was an error, please try again later!");
+
+                            // show the field
+                            $(page).find("#errorFieldCreateEvent").show();
+
+                            // change the text of the button
+                            $(page).find("#createEventButton").html("Create Event!");
+
+                        }
+                    }
+
+                });
+            }
+        });
+    });
+
+    // the app controller for the create account page
+    App.controller("createAccount", function (page) {
+
+        // initially hide the error field
+        $(page).find("#errorFieldCreateAccount").hide();
+
+        // hide the success banner
+        $(page).find("#successBanner").hide();
+
+        // function that executes when the sign up button is pressed
+        $(page).find("#signUpButton").clickable().on("click", function() {
+
+            // check if any of the fields are empty
+            if ($(page).find("#firstnameInput").val() == "" || $(page).find("#surnameInput").val() == "" || $(page).find("#emailInput").val() == "" || $(page).find("#password").val() == "" || $(page).find("#confirmPassword").val() == "") {
+
+                // write this to the error div
+                $(page).find("#errorFieldCreateAccount").html("Oops! - One or more of the fields are empty");
+
+                // make the div visible
+                $(page).find("#errorFieldCreateAccount").show();
+
+            }
+            else {
+
+                // check if the passwords match
+                if ($(page).find("#password").val() != $(page).find("#confirmPassword").val()) {
+
+                    // write this to the error div
+                    $(page).find("#errorFieldCreateAccount").html("Oops! - The passwords don't match");
+
+                    // make the div visible
+                    $(page).find("#errorFieldCreateAccount").show();
+                }
+                else {
+
+                    // initialise a regex that will text emails
+                    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+                    // check if the email is valid and if it is an etoncollege email
+                    if (!regex.test($(page).find("#emailInput").val()) || $(page).find("#emailInput").val().toLowerCase().indexOf("@etoncollege.org.uk") < 0) {
+
+                        // write this to the error div
+                        $(page).find("#errorFieldCreateAccount").html("Oops! - The email is invalid (make sure it's an Eton email address)");
+
+                        // make the div visible
+                        $(page).find("#errorFieldCreateAccount").show();
+                    }
+                    else {
+
+                        // check if the password is long enough
+                        if ($(page).find("#password").val().length < 6) {
+
+                            // write this to the error div
+                            $(page).find("#errorFieldCreateAccount").html("Oops! - Your password isn't long enough");
+
+                            // make the div visible
+                            $(page).find("#errorFieldCreateAccount").show();
+                        }
+                        else {
+
+                            // attempt to sign up the user with an AJAX call
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/signUpUser.php",
+                                data: "emailInput="+$(page).find("#emailInput").val()+"&firstName="+$(page).find("#firstnameInput").val()+"&lastName="+$(page).find("#surnameInput").val()+"&passwordInput="+$(page).find("#password").val(),
+                                // function that will execute before the data is sent
+                                beforeSend: function () {
+
+                                    // change the button to loading
+                                    $(page).find("#signUpButton").html("Loading...");
+
+                                    // hide the error div if it is still there
+                                    $(page).find("#errorFieldCreateAccount").hide();
+                                },
+                                success: function(html) {
+
+                                    // sign up was a sucess
+                                    if (html == "success") {
+
+                                        // tell the user they have been signed up and that an email was sent to their email
+                                        $(page).find("#successBanner").html("Success! - You're all signed up. Please check your emails to confirm ownership of your account");
+
+                                        $(page).find("#successBanner").show();
+
+                                        // make the button not clickable
+                                        $(page).find("#signUpButton").hide();
+
+                                    }
+                                    // check if the email was already taken
+                                    else if (html == "emailtaken") {
+
+                                        // else spit an error message
+                                        $(page).find("#errorFieldCreateAccount").html("Oops! - This email already is already registered to an account");
+
+                                        // show the error field
+                                        $(page).find("#errorFieldCreateAccount").show();
+
+                                        // change the button again
+                                        $(page).find("#signUpButton").html("Sign Up!");
+
+                                    }
+                                    else {
+                                        // else spit an error message
+                                        $(page).find("#errorFieldCreateAccount").html("Oops! - There was an error, please try again later!");
+
+                                        // show the field
+                                        $(page).find("#errorFieldCreateAccount").show();
+
+                                        // change the button again
+                                        $(page).find("#signUpButton").html("Sign Up!");
+
+                                    }
+                                }
+
+                            });
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    });
+
+    // an app controler for the reset password link
+    App.controller("resetPassword", function (page) {
+
+        // hide the error and success banners
+        $(page).find("#errorFieldResetPassword").hide();
+        $(page).find("#successBanner").hide();
+
+        // function that executes when the button is pressed
+        $(page).find("#resetSubmit").clickable().on("click", function () {
+
+            // check that an email has been filled in
+            if ($(page).find("#resetEmailInput").val() == "") {
+
+                // else spit an error message
+                $(page).find("#errorFieldResetPassword").html("Oops! - Please enter an email");
+
+                // show the error field
+                $(page).find("#errorFieldResetPassword").show();
+            }
+            else {
+                // make an ajax call to try to reset the user's password
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/resetPassword.php",
+                    data: "emailInput="+$(page).find("#resetEmailInput").val(),
+                    beforeSend: function () {
+
+                        // change the button to loading
+                        $(page).find("#resetSubmit").html("Loading...");
+
+                        // hide the error div if it is still there
+                        $(page).find("#errorFieldResetPassword").hide();
+                    },
+                    success: function(html) {
+
+                        // sign up was a sucess
+                        if (html == "success") {
+
+                            // tell the user they have been signed up and that an email was sent to their email
+                            $(page).find("#successBanner").html("Success! - An email has been sent with instructions on how to reset your email");
+
+                            $(page).find("#successBanner").show();
+
+                            // make the button not clickable
+                            $(page).find("#resetSubmit").hide();
+
+                        }
+                        // check if the email was already taken
+                        else if (html == "notvalid") {
+
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - This email isn't registered");
+
+                            // show the error field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+
+                        }
+                        else if (html == "alreadyrequested") {
+
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - This email has already had a password reset requested");
+
+                            // show the error field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+                        }
+                        else {
+                            // else spit an error message
+                            $(page).find("#errorFieldResetPassword").html("Oops! - There was an error, please try again later!");
+
+                            // show the field
+                            $(page).find("#errorFieldResetPassword").show();
+
+                            // change the button again
+                            $(page).find("#resetSubmit").html("Sign Up!");
+
+                        }
+                    }
+
+                });
+            }
+        });
+
+    });
+
+    // the page controller for the eventInfo page
+    App.controller("eventInfo", function (page, data) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // function that is called when the back button is pressed
+        $(page).find("#moreInfoBackButton").clickable().on('click', function() {
+
+            // redirect the user back home
+            App.load("mainPage", "slide-right");
+
+        });
+
+        // prepare a the content that we will insert into the main page
+        var content = "<h4 class='eventDate eventSegment'>"+data.data[1]+"</h4><br /><h4 class='eventHost eventSegment'>"+data.data[3]+"</h4><br /><br /><h3 class='eventDesc eventSegment'>"+data.data[4]+"</h3><br /><br /><h3 class='eventLocation eventSegment'>"+data.data[5]+"</h3><div class='app-button' id='attendEventButton' data-id='"+data.data[7]+"'>"+data.data[6]+"</div></div>";
+
+        // insert this into the app section
+        $(page).find("#eventInfoBanner").html(content);
+
+        // add the correct class to the attend event button
+        if ($(page).find("#attendEventButton").html() == "I will attend!") {
+
+            // make the button green
+            $(page).find("#attendEventButton").addClass("green");
+
+        }
+        else {
+            // make the button blue
+            $(page).find("#attendEventButton").addClass("goingToEvent");
+        }
+
+        // check if the event title is too long to use
+        if (data.data[2].length > 25) {
+            data.data[2] = data.data[2].substring(0,25) + "...";
+        }
+
+        // change the title of the page to the title of the event
+        $(page).find("#eventTitleHolder").html(data.data[2]);
+
+        // function that executes when the bookmark is pressed
+        $(page).find("#bookmarkImage").clickable().on("click", function() {
+
+            // check if the event is already bookmarked
+            if ($(this).attr("src") == "bookmarked.png") {
+
+                // unflag the event via ajax
+
+                // save the button so that we can use it later
+                var bookmarkButton = $(this);
+
+                // make an ajax call to the flag event script
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/removeFlag.php",
+                    data: "id="+bookmarkButton.data("id"),
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // unflag the event
+                            bookmarkButton.attr("src", "notBookmarked.png");
+
+                        }
+                    }
+                });
+            }
+            else {
+
+                // bookmark this event for the user
+
+                // save the button so that we can use it later
+                var bookmarkButton = $(this);
+
+                // make an ajax call to the flag event script
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/flagEvent.php",
+                    data: "id="+bookmarkButton.data("id"),
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // mark the event as flageed
+                            bookmarkButton.attr("src", "bookmarked.png");
+
+                        }
+                    }
+                });
+            }
+        });
+
+        // code that is executed when the I will attend button is pressed
+        $(page).find("#attendEventButton").clickable().on("click", function() {
+
+            // check if the user is already going to the event
+            if ($(this).html() != "I will attend!") {
+                // store a refernce to the button
+                var buttonPressed = $(this);
+
+                // attempt to update the databases via an ajax request
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/removeAttendEvent.php",
+                    data: "id="+buttonPressed.data("id"),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        buttonPressed.html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // modify the attend event button
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").removeClass("goingToEvent");
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").addClass("green");
+                            $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").html("I will attend!");
+
+                        }
+                        else {
+                            // change the button back
+                            buttonPressed.html("You're going to this event!");
+                        }
+
+                    }
+                });
+
+            }
+            else {
+
+                // store a reference to the button
+                var button = $(this);
+
+                // prepare an ajax query that will attempt to update this in the database
+                $.ajax({
+
+                    type: "POST",
+                    url: "scripts/attendEvent.php",
+                    data: "id="+button.data("id"),
+                    // function that will execute before the data is sent
+                    beforeSend: function () {
+                        // change the button to loading
+                        button.html("Loading...");
+                    },
+                    success: function(html) {
+
+                        // check if the update was successful
+                        if (html == "success") {
+
+                            // modify the attend event button
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").removeClass("green");
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").addClass("goingToEvent");
+                            $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").html("You're going to this event!");
+
+                        }
+                        else {
+
+                            // change the button back
+                            button.html("I will attend!");
+                        }
+
+                    }
+                });
+            }
+        });
+
+    });
+
+    // the page controller for the user's event list
+    App.controller("viewUserEvents", function(page) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // script that is executed when the back button is pressed
+        $(page).find("#userEventsBackButton").clickable().on("click", function() {
+            // load the home page
+            App.load("mainPage", "slide-right");
+        });
+
+        $(page).on("appReady", function () {
+
+            // an ajax call to load up all of the events
+            $.ajax({
+                type: "POST",
+                url: "scripts/fetchSavedEvents.php",
+                beforeSend: function () {
+
+                    // add in a small loading banner
+                    $(page).find("#viewUserEventsBody").html("<p class='app-section'>Loading events...</p>")
+                },
+                success: function(html) {
+
+                    // remove the loading banner
+                    $(page).find("#viewUserEventsBody").html("")
+
+                    // split the flaged events and events they are attending
+                    var resultData = html.split("`@marker@`");
+
+                    // first check if there are any bookmarked events
+                    if (resultData[0] == "empty") {
+
+                        $(page).find("#viewUserEventsBody").html("<p class='app-section'>You have no bookmarked events!</p>")
+                    }
+                    else {
+
+                        // turn the events into a proper javascript array
+                        var flagedEvents = JSON.parse(resultData[0])
+
+                        // add a banner that tells the user that this is there flaged events
+                        $(page).find("#viewUserEventsBody").append("<p class='app-section orange' style='text-align:center;color:white;'>Your Bookmarked Events:</p>")
+
+                        //loop through each event in the array
+                        for (var event = 0; event < flagedEvents.length; event++) {
+
+                            // fomrate the date that we will use
+                            var date = flagedEvents[event][3].slice(0,10);
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // formate the time that we will use
+                            // var timeToUse = new Date(flagedEvents[event][3]);
+                            // timeToUse = timeToUse.toTimeString().slice(0,5);
+                            var timeToUse = flagedEvents[event][3].split(" ");
+                            timeToUse = timeToUse[1].slice(0,-3);
+
+                            // check if the user has flagged this event
+                            if (flagedEvents[event][7] == "true") {
+
+                                // change the source to bookmarked
+                                var source = "bookmarked.png";
+                            }
+                            else {
+                                var source = "notBookmarked.png"
+                            }
+
+                            // check if the user is going to this event
+                            if (flagedEvents[event][6] == "true") {
+
+                                // prepare the div that says I will attend
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+flagedEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+flagedEvents[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+flagedEvents[event][1]+'</h2><h4 class="eventHost eventSegment">By '+flagedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+flagedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+flagedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" data-id="'+flagedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            }
+                            else {
+
+                                // prepare the div we will insert
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+flagedEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+flagedEvents[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+flagedEvents[event][1]+'</h2><h4 class="eventHost eventSegment">By '+flagedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+flagedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+flagedEvents[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id="'+flagedEvents[event][0]+'">I will attend!</div></div>');
+                            }
+
+                            // insert a div into the page for this event
+                            $(page).find("#viewUserEventsBody").append(divToInsert);
+                        }
+                    }
+
+                    // check if the user is going to any events
+                    if (resultData[1] != "empty" && resultData[1] != "[]") {
+
+                        // turn the events into a javascipt array
+                        var userEvents = JSON.parse(resultData[1]);
+
+                        // add a banner to the page telling the user that these are the events that they are going to
+                        $(page).find("#viewUserEventsBody").append("<p class='app-section orange' style='text-align:center;color:white;'>Events that you are going to:</p>")
+
+                        // loop through each event in the array
+                        for (var event = 0; event < userEvents.length; event++) {
+
+                            // format the date
+                            var date = userEvents[event][3].slice(0,10);
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // format the time that we will use
+                            // var timeToUse = new Date(userEvents[event][3]);
+                            // timeToUse = timeToUse.toTimeString().slice(0,5);
+                            var timeToUse = userEvents[event][3].split(" ");
+                            timeToUse = timeToUse[1].slice(0,-3);
+
+
+                            // check if the user has flagged this event
+                            if (userEvents[event][7] == "true") {
+
+                                // change the source to bookmarked
+                                var source = "bookmarked.png";
+                            }
+                            else {
+                                var source = "notBookmarked.png"
+                            }
+
+                            // check if the user is going to this event
+                            if (userEvents[event][6] == "true") {
+
+                                // prepare the div that says I will attend
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+userEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+userEvents[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+userEvents[event][1]+'</h2><h4 class="eventHost eventSegment">By '+userEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+userEvents[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+userEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" data-id="'+userEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            }
+                            else {
+
+                                // prepare the div we will insert
+                                var divToInsert = $('<div class="app-section eventBlock" data-id='+userEvents[event][0]+'><h4 class="eventDate eventSegment">'+dateToUse+' - '+timeToUse+'<img data-id='+userEvents[event][0]+' id="bookmarkImage" src="'+source+'" style="float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+userEvents[event][1]+'</h2><h4 class="eventHost eventSegment">By '+userEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+userEvents[event][2]+'</h3><h3 class="eventLocation eventSegment"><img src="marker.png" id="locationMarker"/>'+userEvents[event][4]+'</h3><div class="app-button green" id="attendEventButton" data-id="'+userEvents[event][0]+'">I will attend!</div></div>');
+                            }
+
+                            // insert a div into the page for this event
+                            $(page).find("#viewUserEventsBody").append(divToInsert);
+                        }
+                    }
+                    else {
+
+                        // tell the user that they weren't going to any events
+                        $(page).find("#viewUserEventsBody").append("<p class='app-section'>You aren't going to any events!</p>")
+                    }
+
+                    // function that executes when the bookmark is pressed
+                    $(page).find("#bookmarkImage").clickable().on("click", function() {
+
+                        // check if the event is already bookmarked
+                        if ($(this).attr("src") == "bookmarked.png") {
+
+                            // unflag the event via ajax
+
+                            // save the button so that we can use it later
+                            var bookmarkButton = $(this);
+
+                            // make an ajax call to the flag event script
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/removeFlag.php",
+                                data: "id="+bookmarkButton.data("id"),
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // unflag the event
+                                        bookmarkButton.attr("src", "notBookmarked.png");
+
+                                        // reload the page
+                                        App.load("viewUserEvents", "fade");
+
+                                    }
+                                }
+                            });
+                        }
+                        else {
+
+                            // bookmark this event for the user
+
+                            // save the button so that we can use it later
+                            var bookmarkButton = $(this);
+
+                            // make an ajax call to the flag event script
+                            // prepare an ajax query that will attempt to update this in the database
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/flagEvent.php",
+                                data: "id="+bookmarkButton.data("id"),
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // mark the event as flageed
+                                        bookmarkButton.attr("src", "bookmarked.png");
+
+                                        // reload the page
+                                        App.load("viewUserEvents", "fade");
+
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    // code that executes when the event blocks are clicked on
+                    $(page).find(".eventBlock").clickable().on('click', function() {
+
+                        // load the event details page and pass all of the info about the event to it
+                        App.load("eventInfo", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id")]}, "slide-left");
+
+                    });
+
+                    // code that is executed when the I will attend button is pressed
+                    $(page).find("#attendEventButton").clickable().on("click", function() {
+
+                        // check if the user is already going to the event
+                        if ($(this).html() != "I will attend!") {
+
+                            // store a refernce to the button
+                            var buttonPressed = $(this);
+
+                            // attempt to update the databases via an ajax request
+                            // prepare an ajax query that will attempt to update this in the database
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/removeAttendEvent.php",
+                                data: "id="+buttonPressed.data("id"),
+                                // function that will execute before the data is sent
+                                beforeSend: function () {
+                                    // change the button to loading
+                                    buttonPressed.html("Loading...");
+                                },
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // modify the attend event button
+                                        $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").removeClass("goingToEvent");
+                                        $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").addClass("green");
+                                        $(page).find("#attendEventButton[data-id='"+buttonPressed.data('id')+"']").html("I will attend!");
+
+                                        // reload the page
+                                        App.load("viewUserEvents", "fade");
+
+                                    }
+                                    else {
+                                        // change the button back
+                                        buttonPressed.html("You're going to this event!");
+                                    }
+
+                                }
+                            });
+
+                        }
+                        else {
+                            // store a reference to the button
+                            var button = $(this);
+
+                            // prepare an ajax query that will attempt to update this in the database
+                            $.ajax({
+
+                                type: "POST",
+                                url: "scripts/attendEvent.php",
+                                data: "id="+button.data("id"),
+                                // function that will execute before the data is sent
+                                beforeSend: function () {
+                                    // change the button to loading
+                                    button.html("Loading...");
+                                },
+                                success: function(html) {
+
+                                    // check if the update was successful
+                                    if (html == "success") {
+
+                                        // modify the attend event button
+                                        $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").removeClass("green");
+                                        $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").addClass("goingToEvent");
+                                        $(page).find("#attendEventButton[data-id='"+button.data('id')+"']").html("You're going to this event!");
+
+                                        // reload the page
+                                        App.load("viewUserEvents", "fade");
+                                    }
+                                    else {
+
+                                        // change the button back
+                                        button.html("I will attend!");
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+                }
+            })
+        })
+    });
+
+    // the page controller to manage the users events
+    App.controller("manageUserEvents", function(page, data) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // script that is executed when the back button is pressed
+        $(page).find("#manageEventsBackButton").clickable().on("click", function() {
+            // load the home page
+            App.load("mainPage", "slide-right");
+        });
+
+        $(page).on("appReady", function () {
+
+            // an ajax call to load up all of the events
+            $.ajax({
+                type: "POST",
+                url: "scripts/fetchHostedEvents.php",
+                beforeSend: function () {
+
+                    // add in a small loading banner
+                    $(page).find("#managerUserEventsMainBody").html("<p class='app-section'>Loading events...</p>")
+                },
+                success: function(html) {
+
+                    // remove the loading banner
+                    $(page).find("#managerUserEventsMainBody").html("")
+
+                    // check if an event has just been successfully modified and so if we need to tell the user this
+                    if (data.data[0] == "successBanner") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section green'>Event successfully updated!</p>")
+                    }
+                    else if (data.data[0] == "successBannerDelete") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section green'>Event successfully deleted!</p>")
+                    }
+                    else if (data.data[0] == "failureBannerDelete") {
+                        // add in the banner
+                        $(page).find("#managerUserEventsMainBody").html("<p class='app-section red'>There was an error deleting your event, please try again later</p>")
+                    }
+
+                    // split the data into the active and archived events
+                    var userData = html.split("`@marker@`");
+
+                    // add a banner saying that this is their active events
+                    $(page).find("#managerUserEventsMainBody").append("<p class='app-section orange' style='color:white;text-align:center;'>Your active events:</p>")
+
+                    // check if there are any active events
+                    if (userData[0] != "empty") {
+
+                        // turn the events into a javascript array
+                        var activeEvents = JSON.parse(userData[0])
+
+                        // loop through each event and add it to the page
+                        for (var event = 0; event < activeEvents.length; event++) {
+
+                            // fomrate the date that we will use
+                            var date = activeEvents[event][3];
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // formate the time that we will use
+                            var timeToUse = activeEvents[event][3].split(" ");
+                            timeToUse = timeToUse[1].slice(0,-3);
+
+                            // prepare the div that we will insert
+                            var divToInsert = $('<div class="app-section eventBlock" data-status="etonEvents" data-id='+activeEvents[event][0]+' data-ticketed='+activeEvents[event][6]+' data-people='+activeEvents[event][8]+' data-location='+activeEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+activeEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+activeEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+activeEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+activeEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+activeEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+activeEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+activeEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            // insert a div into the page for this event
+                            $(page).find("#managerUserEventsMainBody").append(divToInsert);
+                        }
+
+                    }
+                    else {
+
+                        // tell the user that they aren't hosting any active events
+                        $(page).find("#managerUserEventsMainBody").append("<p class='app-section'>You are't currently hosting any events!</p>");
+
+                    }
+
+                    // add a banner saying that this is their archived events
+                    $(page).find("#managerUserEventsMainBody").append("<p class='app-section orange' style='color:white;text-align:center;'>Your archived events:</p>")
+
+                    // check if there are any archived events
+                    if (userData[1] != 'empty') {
+
+                        // turn the events into a javascript array
+                        var archivedEvents = JSON.parse(userData[1])
+
+                        // loop through each event and add it to the page
+                        for (var event = 0; event < archivedEvents.length; event++) {
+
+                            // fomrate the date that we will use
+                            var date = archivedEvents[event][3].slice(0,10);
+                            date = new Date(date);
+                            var dateToUse = date.toDateString().slice(0,-5);
+
+                            // formate the time that we will use
+                            var timeToUse = archivedEvents[event][3].split(" ");
+                            timeToUse = timeToUse[1].slice(0,-3);
+
+                            // prepare the div that we will insert
+                            var divToInsert = $('<div class="app-section eventBlock" data-status="etonEventsArchive" data-id='+archivedEvents[event][0]+' data-ticketed='+archivedEvents[event][6]+' data-people='+archivedEvents[event][8]+' data-location='+archivedEvents[event][4]+'><h4 class="eventDate eventSegment" data-timestamp='+archivedEvents[event][3].replace(" ", "T")+'>'+dateToUse+' - '+timeToUse+'<img data-id='+archivedEvents[event][0]+' id="bookmarkImage" src="bookmarked.png" style="display:none;float:right;width:50px;height:50px;"/></h4><h2 class="eventTitle eventSegment" style="text-align:left;">'+archivedEvents[event][1]+'</h2><h4 class="eventHost eventSegment" style="display:none;">By '+archivedEvents[event][5]+'</h4><h3 class="eventDesc eventSegment" style="display:none;">'+archivedEvents[event][2]+'</h3><h3 class="eventLocation eventSegment" style="display:none;"><img src="marker.png" id="locationMarker" style="display:none;"/>'+archivedEvents[event][4]+'</h3><div class="app-button goingToEvent" id="attendEventButton" style="display:none;" data-id="'+archivedEvents[event][0]+'">You&#39;re going to this event!</p></div>');
+
+                            // insert a div into the page for this event
+                            $(page).find("#managerUserEventsMainBody").append(divToInsert);
+                        }
+
+                    }
+                    else {
+                        // tell the user that they aren't hosting any archived events
+                        $(page).find("#managerUserEventsMainBody").append("<p class='app-section'>You don't have any archived events!</p>");
+
+                    }
+
+                    // code that executes when the event blocks are clicked on
+                    $(page).find(".eventBlock").clickable().on('click', function() {
+
+                        // load the event details page and pass all of the info about the event to it
+                        App.load("eventAnalyticsPage", { data: [$(this).data("id"), $(this).find(".eventDate").html(), $(this).find(".eventTitle").html(),$(this).find(".eventHost").html(),$(this).find(".eventDesc").html(),$(this).find(".eventLocation").html(), $(this).find("#attendEventButton").html(), $(this).find("#attendEventButton").data("id"), $(this).find(".eventDate").data("timestamp"), $(this).data("ticketed"), $(this).data("people"), $(this).data("location"), $(this).data("status")]}, "slide-left");
+                    });
+                }
+            })
+        })
+
+    });
+
+    // an app controller for the edit user events page
+    App.controller("editUserEvents", function(page, data) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // hide the main page of the body until we are done loading
+        $(page).find("#elementContainer").css("display", "none !important");
+
+        // code that is executed when the back button is pressed
+        $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
+
+            // go to the event analytics page
+            App.load("eventAnalyticsPage", {data: data.data}, "slide-right");
+
+        })
+
+        $(page).on("appReady", function() {
+
+            // change the title of the page to be the title of the event
+            $(page).find("#editUserEventsTopbar").html(data.data[2]);
+
+            // update all of the fields on currently on the page
+            $(page).find("#titleInput").val(data.data[2]);
+            $(page).find("#descriptionInput").val(data.data[4]);
+            $(page).find("#dateInput").val(data.data[8]);
+            $(page).find("#locationInput").val(data.data[11]);
+            $(page).find("#hostNameInput").val(data.data[3].replace("By ",""));
+
+            // check if the event is ticketed
+            if (data.data[9] == "false") {
+
+                $(page).find("#noOption").attr("selected", "selected");
+                $(page).find("#yesOption").removeAttr("selected");
+            }
+            else {
+                $(page).find("#yesOption").attr("selected", "selected");
+                $(page).find("#yesOption").removeAttr("selected");
+            }
+
+            // show the page when we are ready
+            $(page).find("#elementContainer").show();
+        })
+
+        // function that is executed when the edit event button is pressed
+        $(page).find("#updateButton").clickable().on("click", function() {
+
+            // store a reference to the button
+            var button = $(this);
+
+            // get all the variables that will use
+            var eventID = data.data[0];
+            var db = data.data[12];
+            var isTicketed = $(page).find("#isTicketed").val();
+            var eventHost = $(page).find("#hostNameInput").val();
+            var eventLocation = $(page).find("#locationInput").val();
+            var eventDate = $(page).find("#dateInput").val();
+            var eventDesc = $(page).find("#descriptionInput").val();
+            var eventTitle = $(page).find("#titleInput").val();
+
+            // check if the user wants to email the user about changes
+            if ($(page).find("#notifyUsers").is(":checked")){
+
+                // initialise a string that keeps track of the values which have changed
+                var changed = "";
+
+                if (eventHost != data.data[3].replace("By ","")) {
+
+                    changed += "$$$the event is now hosted by " + eventHost;
+
+                }
+                if (eventLocation != data.data[11]) {
+
+                    changed += "$$$the location of the event is now " + eventLocation;
+
+                }
+                if (eventDate != data.data[8]) {
+
+                    // formate the date we will use
+
+                    formatted = eventDate.replace("T", " ");
+                    formatted = new Date(formatted.slice(0,10));
+                    var dateToUse = formatted.toDateString().slice(0,-5);
+
+                    // format the time we will use
+                    var timeToUse = eventDate.split("T");
+                    timeToUse = timeToUse[1];
+
+                    changed += "$$$the event is now on " + dateToUse + " at " + timeToUse;
+
+                }
+                if (eventDesc != data.data[4]) {
+
+                    changed += "$$$the description of the event is now "+ eventDesc;
+
+                }
+                if (eventTitle != data.data[2]) {
+
+                    changed += "$$$the title of the event is now "+ eventTitle;
+
+                }
+
+                // if there weren't any chnages set email to false
+                if (changed == "") {
+                    var email = "false";
+                }
+                else {
+                    var email = "true";
+                }
+            }
+            else {
+                var email = "false";
+            }
+
+            // prepare an ajax query that will attempt to update the event
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/updateEvent.php",
+                data: "eventID="+eventID+"&db="+db+"&isTicketed="+isTicketed+"&eventHost="+eventHost+"&eventLocation="+eventLocation+"&eventDate="+eventDate+"&eventDesc="+eventDesc+"&eventTitle="+eventTitle+"&email="+email+"&changed="+changed,
+
+                // function that will execute before the data is sent
+                beforeSend: function () {
+                    // change the button to loading
+                    button.html("Loading...");
+                },
+                success: function(html) {
+
+                    // check if the attempt was successful
+                    if (html == "success") {
+                        App.load("manageUserEvents", {data: ["successBanner"]}, "slide-right")
+                    }
+                    else {
+
+                        // change the banner at the top of the page to tell the user that there was an error
+                        $(page).find("#infoBanner").removeClass("blue");
+                        $(page).find("#infoBanner").addClass("red");
+                        $(page).find("#infoBanner").html("Oops! - There was an error, please try again later")
+
+                        // change the button back
+                        button.html("Update Event Info")
+                    }
+                }
+            });
+        });
+    });
+
+    // an app controller for the analytics page
+    App.controller("eventAnalyticsPage", function(page, data) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // code that is executed when the back button is pressed
+        $(page).find("#editUserEventsGoBackButton").clickable().on("click", function() {
+            // go to the manage user events page
+            App.load("manageUserEvents", {data: ["noBanner"]}, "slide-right");
+        })
+
+        // check if the event title is too long to use
+        if (data.data[2].length > 25) {
+            data.data[2] = data.data[2].substring(0,25) + "...";
+        }
+
+        // change the title of the page to be the title of the event
+        $(page).find("#analyticsTitle").html(data.data[2]);
+
+        // prepare an app section that tells the user how many people are going
+        var appSectionToInsert = '<div class="app-section">The number of people going to your event are: '+data.data[10]+'</div>'
+
+        // prepare a button that the user can press to send a message to all of their users
+        var sendMessageButton = '<div class="app-button app-section" style="background-color:orange;color: white !important;" id="sendMessageButton">Send a message to the people going to your event</div>';
+
+        // prepare a button that will insert into the page to edit the event
+        var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>';
+
+        // prepare a button that can be used to delete the event
+        var deleteButton = '<div class="app-button app-section" style="background-color:red;color: white !important;" id="deleteEventButton">Delete Event</div>';
+
+        // insert the app section
+        $(page).find(".app-content").append(appSectionToInsert);
+
+        // insert the msg button
+        $(page).find(".app-content").append(sendMessageButton);
+
+        // insert the button
+        $(page).find(".app-content").append(buttonToInsert);
+
+        // insert the delete button
+        $(page).find(".app-content").append(deleteButton);
+
+        // the function that is executed when the send msg button is pressed
+        $(page).find("#sendMessageButton").clickable().on("click", function() {
+
+            // load up the send message page
+            App.load("sendMessagePage", {data: data.data}, "slide-left")
+        });
+
+        // functiont that is executed when the button is pressed
+        $(page).find("#editEventButton").clickable().on("click", function() {
+            // load the edit event page
+            App.load("editUserEvents", {data: data.data}, "slide-left");
+        })
+
+        // function that is executed when the delte button is pressed
+        $(page).find("#deleteEventButton").clickable().on("click", function() {
+
+            // popup a banner
+            App.dialog({
+                title : 'Confirm Deletion',
+                text: 'Please confirm that you want to delete this event',
+                okButton : 'Confirm',
+                cancelButton : 'Cancel',
+            }, function(choice) {
+                if (choice == "ok") {
+
+                    // prepare the vars we need
+                    var eventID = data.data[0];
+                    var db = data.data[12];
+
+                    // make an ajax call to the script that deletes events
+                    // prepare an ajax query that will attempt to update the event
+                    $.ajax({
+
+                        type: "POST",
+                        url: "scripts/deleteEvent.php",
+                        data: "eventID="+eventID+"&db="+db,
+                        success: function(html) {
+
+                            // check if the attempt was successful
+                            if (html == "success") {
+                                App.load("manageUserEvents", {data: ["successBannerDelete"]}, "slide-right");
+                            }
+                            else {
+                                App.load("manageUserEvents", {data: ["failureBannerDelete"]}, "slide-right");
+                            }
+                        }
+                    });
+                }
+            })
+
+        });
+
+    });
+
+    // an app controller for the send message page
+    App.controller("sendMessagePage", function(page, data) {
+
+        // authenticate the user
+        $(page).on("appReady", function() {
+            $.ajax({
+
+                type: "POST",
+                url: "scripts/authenticate.php",
+                data: "",
+                success: function(html) {
+
+                    // check if the user isn't authenticated
+                    if (html != "true") {
+
+                        // redirect the user
+                        App.load("home", "fade");
+
+                    }
+                }
+
+            });
+        });
+
+        // function that is exextued when the back button is pressed
+        $(page).find("#sendMessageBackButton").clickable().on("click", function() {
+            // load the event analytics page
+            App.load("eventAnalyticsPage", {data: data.data}, "slide-right");
+        })
+
+        // function that will execute when the user presses the send button
+        $(page).find("#sendMessageSubmitButton").clickable().on("click", function() {
+
+            // make the user confirm the sending of the email
+            App.dialog({
+                title : 'Send This Message?',
+                text: 'Please confirm that you want to send this message to everyone currently going to your event',
+                okButton : 'Confirm',
+                cancelButton : 'Cancel',
+            }, function(choice) {
+                if (choice == "ok") {
+                    // prepare the vars we need
+                    var eventID = data.data[0];
+                    var eventName = data.data[2];
+                    var db = data.data[12];
+                    var messageToSend = $(page).find("#messageToSendToUsersInput").val();
+
+
+                    // make an ajax call to delete this event
+                    $.ajax({
+
+                        type: "POST",
+                        url: "scripts/sendMessage.php",
+                        data: "eventID="+eventID+"&db="+db+"&eventName="+eventName+"&messageToSend="+messageToSend,
+                        success: function(html) {
+
+                            // check if it was successful
+                            if (html == "emailSent") {
+                                // delete the send button
+                                $(page).find("#sendMessageSubmitButton").hide();
+
+                                // change the text in the banner telling the user it was successful
+                                $(page).find("#sendMessageBanner").html("Message successfully sent!");
+
+                                // make this banner green
+                                $(page).find("#sendMessageBanner").addClass("green");
+
+                                // make the banner visible
+                                $(page).find("#sendMessageBanner").show();
+                            }
+                            else {
+                                // delete the send button
+                                $(page).find("#sendMessageSubmitButton").hide();
+
+                                // change the text in the banner telling the user it was successful
+                                $(page).find("#sendMessageBanner").html("Oops! - There was an error, please try again later.");
+
+                                // make this banner green
+                                $(page).find("#sendMessageBanner").addClass("red");
+
+                                // make the banner visible
+                                $(page).find("#sendMessageBanner").show();
+                            }
+                        }
+                    });
+                }
+            })
+
+        })
+
+    });
+
+    try {
+        App.restore();
+    } catch (err) {
+        App.load('home');
+    }
+    </script>
+  </body>
+</html>
