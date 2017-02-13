@@ -3,6 +3,7 @@
     <head>
         <title>Edutix</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
         <link rel="stylesheet" href="app.min.css">
         <style>
 
@@ -572,7 +573,7 @@
 
     <script>
 
-    App.controller('mainPage', function (page) {
+    App.controller('mainPage', function (page, data) {
 
         // authenticate the user
         $(page).on("appReady", function() {
@@ -619,11 +620,14 @@
 
         $(page).on("appReady", function () {
 
+            // init event counter
+            var eventCounter = 0;
+
             // an ajax call to load up all of the events
             $.ajax({
                 type: "POST",
                 url: "scripts/fetchEvents.php",
-                data: "startOffset=0",
+                data: "startOffset="+data.data[0],
                 beforeSend: function () {
 
                     // add in a small loading banner
@@ -699,6 +703,21 @@
                             // insert a div into the page for this event
                             $(page).find("#mainPageBody").append(divToInsert);
 
+                            // incriment the event counter
+                            eventCounter++;
+
+                        }
+
+                        // check if there are 20 events
+                        if ((eventCounter % 20) == 0 && eventCounter != 0) {
+                            // add a button to the end of the page which allows the user to load in more events
+                            $(page).find("#mainPageBody").append('<div class="app-section app-button blue" id="loadMoreEventsButton">See more events</div>');
+
+                            // code that is executed when this button is pressed
+                            $(page).find("#loadMoreEventsButton").clickable().on("click", function() {
+                                // reload the page with 20 more events than before
+                                App.load("mainPage", {data: [data.data[0] + 20]}, "fade");
+                            });
                         }
 
                         // at the end add a div of blank space
@@ -886,7 +905,6 @@
 
                 }
             });
-
         })
 
     });
@@ -940,12 +958,22 @@
                             if (html == "success") {
 
                                 // go to the homepage
-                                App.load('mainPage', "slide-left");
+                                App.load('mainPage', { data: [20]}, "slide-left");
 
                             }
                             // check if the users email isn't verified
                             else if (html == "Your email needs to be confirmed before you can login") {
                                 $(page).find("#errorFieldLogin").html("Oops! - You need to verify your email before you can login!");
+
+                                // show the field
+                                $(page).find("#errorFieldLogin").show();
+
+                                // change the button again
+                                $(page).find("#submitButton").html("Access Edutix");
+                            }
+                            // check if the combo is wrong
+                            else if (html == "Email or password incorrect") {
+                                $(page).find("#errorFieldLogin").html("Oops! - Email or password incorrect!");
 
                                 // show the field
                                 $(page).find("#errorFieldLogin").show();
@@ -1061,7 +1089,7 @@
                         if (html == "success") {
 
                             // redirect the user to the events page
-                            App.load("mainPage", "slide-right");
+                            App.load("mainPage", { data: [20]},"slide-right");
 
                         }
                         else {
@@ -1331,7 +1359,7 @@
         $(page).find("#moreInfoBackButton").clickable().on('click', function() {
 
             // redirect the user back home
-            App.load("mainPage", "slide-right");
+            App.load("mainPage", { data: [20]}, "slide-right");
 
         });
 
@@ -1525,7 +1553,7 @@
         // script that is executed when the back button is pressed
         $(page).find("#userEventsBackButton").clickable().on("click", function() {
             // load the home page
-            App.load("mainPage", "slide-right");
+            App.load("mainPage", { data: [20]}, "slide-right");
         });
 
         $(page).on("appReady", function () {
@@ -1548,7 +1576,7 @@
                     var resultData = html.split("`@marker@`");
 
                     // first check if there are any bookmarked events
-                    if (resultData[0] == "empty") {
+                    if (resultData[0] == "empty" || resultData[0] == "[]") {
 
                         $(page).find("#viewUserEventsBody").html("<p class='app-section'>You have no bookmarked events!</p>")
                     }
@@ -1843,7 +1871,7 @@
         // script that is executed when the back button is pressed
         $(page).find("#manageEventsBackButton").clickable().on("click", function() {
             // load the home page
-            App.load("mainPage", "slide-right");
+            App.load("mainPage",{ data: [20]}, "slide-right");
         });
 
         $(page).on("appReady", function () {
@@ -1892,9 +1920,9 @@
                         for (var event = 0; event < activeEvents.length; event++) {
 
                             // fomrate the date that we will use
-                            var date = activeEvents[event][3];
-                            date = new Date(date);
-                            var dateToUse = date.toDateString().slice(0,-5);
+                            var date1 = activeEvents[event][3].slice(0,10);
+                            date1 = new Date(date1);
+                            var dateToUse = date1.toDateString().slice(0,-5);
 
                             // formate the time that we will use
                             var timeToUse = activeEvents[event][3].split(" ");
@@ -2169,7 +2197,7 @@
         var appSectionToInsert = '<div class="app-section">The number of people going to your event are: '+data.data[10]+'</div>'
 
         // prepare a button that the user can press to send a message to all of their users
-        var sendMessageButton = '<div class="app-button app-section" style="background-color:orange;color: white !important;" id="sendMessageButton">Send a message to the people going to your event</div>';
+        var sendMessageButton = '<div class="app-button app-section" style="background-color:orange;color: white !important;" id="sendMessageButton">Send a message to everyone attending</div>';
 
         // prepare a button that will insert into the page to edit the event
         var buttonToInsert = '<div class="app-button app-section" style="background-color:blue;color: white !important;" id="editEventButton">Edit Event Info</div>';

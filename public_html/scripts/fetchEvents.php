@@ -18,7 +18,7 @@ if(mysqli_connect_error()) {
 };
 
 // prepare a query that will get the first 20 events
-$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt` FROM `etonEvents` ORDER BY `eventDate` LIMIT ".$_POST['startOffset'].", 20";
+$query = "SELECT `id`, `eventName`, `eventDesc`, `eventDate`, `eventLocation`, `eventHost`, `createdBy`, `salt` FROM `etonEvents` ORDER BY `eventDate` LIMIT ".$_POST['startOffset'];
 
 // attempt to execute the query
 if ($result = mysqli_query($link, $query)) {
